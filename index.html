@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>ORYGN Expansión — Sistema de Equipo</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#E8602A" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="AUREX Wellness" />
+  <link rel="apple-touch-icon" href="logo-aurex-wellness.jpeg" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --naranja: #E8602A;
+      --naranja-dark: #c44e1f;
+      --negro: #050505;
+      --gris-oscuro: #111111;
+      --gris-medio: #1a1a1a;
+      --gris-borde: #2a2a2a;
+      --texto: #f0f0f0;
+      --texto-suave: #888;
+      --max: 480px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--negro);
+      color: var(--texto);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px 20px 40px;
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* Fondo cinematográfico */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse 60% 40% at 50% 0%, rgba(232,96,42,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 100% 100%, rgba(232,96,42,0.06) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23E8602A' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--max);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Logo / Header */
+    .logo-area {
+      text-align: center;
+      margin-bottom: 20px;
+      animation: fadeDown 0.8s ease both;
+    }
+
+    .logo-img {
+      width: 228px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    /* Card */
+    .card {
+      background: var(--gris-oscuro);
+      border: 1px solid var(--gris-borde);
+      border-radius: 16px;
+      padding: 28px 24px;
+      animation: fadeUp 0.8s ease 0.2s both;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--naranja), transparent);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: var(--gris-medio);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 32px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      color: var(--texto-suave);
+      border: none;
+      background: transparent;
+    }
+
+    .tab.active {
+      background: var(--naranja);
+      color: white;
+    }
+
+    /* Forms */
+    .form { display: none; }
+    .form.active { display: block; }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--texto-suave);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      background: var(--gris-medio);
+      border: 1px solid var(--gris-borde);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 15px;
+      color: var(--texto);
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input::placeholder { color: #444; }
+
+    input:focus {
+      border-color: var(--naranja);
+      box-shadow: 0 0 0 3px rgba(232,96,42,0.12);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--naranja);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:hover {
+      background: var(--naranja-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(232,96,42,0.3);
+    }
+
+    .btn:active { transform: translateY(0); }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto;
+    }
+
+    .btn.loading .btn-text { display: none; }
+    .btn.loading .btn-spinner { display: block; }
+
+    /* Mensaje de error / éxito */
+    .msg {
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: none;
+      line-height: 1.5;
+    }
+
+    .msg.error {
+      background: rgba(220,38,38,0.1);
+      border: 1px solid rgba(220,38,38,0.3);
+      color: #fca5a5;
+      display: block;
+    }
+
+    .msg.success {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: #86efac;
+      display: block;
+    }
+
+    /* Nombre en registro */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* Divider */
+    .divider {
+      text-align: center;
+      color: var(--texto-suave);
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin: 24px 0;
+      position: relative;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 38%;
+      height: 1px;
+      background: var(--gris-borde);
+    }
+
+    .divider::before { left: 0; }
+    .divider::after { right: 0; }
+
+    /* Footer */
+    .footer-note {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 11px;
+      color: var(--texto-suave);
+      letter-spacing: 0.5px;
+      line-height: 1.6;
+      animation: fadeUp 0.8s ease 0.4s both;
+    }
+
+    .footer-note a {
+      color: var(--naranja);
+      text-decoration: none;
+    }
+
+    .logo-gold {
+      color: #D4A843;
+    }
+
+    .logo-orange {
+      color: var(--naranja);
+    }
+
+    .dot-sep {
+      color: var(--naranja);
+      margin: 0 4px;
+    }
+
+    /* Input contraseña con ojito */
+    .input-pass-wrap {
+      position: relative;
+    }
+
+    .input-pass-wrap input {
+      padding-right: 46px;
+    }
+
+    .toggle-pass {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--texto-suave);
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+
+    .toggle-pass:hover { color: var(--naranja); }
+
+    /* Olvidé contraseña */
+    .forgot {
+      text-align: right;
+      margin-top: -12px;
+      margin-bottom: 20px;
+    }
+
+    .forgot a {
+      font-size: 12px;
+      color: var(--texto-suave);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .forgot a:hover { color: var(--naranja); }
+
+    /* Reset modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--gris-oscuro);
+      border: 1px solid var(--gris-borde);
+      border-radius: 16px;
+      padding: 32px;
+      width: 100%;
+      max-width: 400px;
+      animation: fadeUp 0.3s ease both;
+    }
+
+    .modal h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .modal p {
+      font-size: 13px;
+      color: var(--texto-suave);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .modal-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      padding: 12px;
+      background: var(--gris-medio);
+      border: 1px solid var(--gris-borde);
+      border-radius: 10px;
+      color: var(--texto-suave);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover { border-color: var(--naranja); color: var(--texto); }
+
+    .btn-primary-sm {
+      flex: 1;
+      padding: 12px;
+      background: var(--naranja);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary-sm:hover { background: var(--naranja-dark); }
+
+    /* Animaciones */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Ref badge */
+    .ref-badge {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: rgba(232,96,42,0.08);
+      border: 1px solid rgba(232,96,42,0.2);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+    }
+
+    .ref-badge.visible { display: flex; }
+
+    .ref-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--naranja);
+      flex-shrink: 0;
+      animation: pulse 2s ease infinite;
+    }
+
+    .ref-text {
+      font-size: 12px;
+      color: var(--texto-suave);
+      line-height: 1.4;
+    }
+
+    .ref-text strong { color: var(--naranja); font-weight: 600; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Logo -->
+  <div class="logo-area">
+    <img src="logo-aurex-wellness.jpeg" alt="AUREX Wellness" class="logo-img" />
+  </div>
+
+  <!-- Badge de referido -->
+  <div class="ref-badge" id="refBadge">
+    <div class="ref-dot"></div>
+    <div class="ref-text">
+      Acceso activado por <strong id="refNombre"></strong><br>
+      Tu upline estará disponible en la app
+    </div>
+  </div>
+
+  <!-- Card principal -->
+  <div class="card">
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')">Ingresar</button>
+      <button class="tab" onclick="switchTab('registro')">Registrarse</button>
+    </div>
+
+    <!-- Mensaje global -->
+    <div class="msg" id="globalMsg"></div>
+
+    <!-- FORM LOGIN -->
+    <div class="form active" id="formLogin">
+      <div class="form-group">
+        <label>Correo electrónico</label>
+        <input type="email" id="loginEmail" placeholder="tu@correo.com" autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <div class="input-pass-wrap">
+          <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" />
+          <button type="button" class="toggle-pass" onclick="togglePass('loginPass', this)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="forgot">
+        <a href="#" onclick="openReset(); return false;">¿Olvidaste tu contraseña?</a>
+      </div>
+      <button class="btn" id="btnLogin" onclick="doLogin()">
+        <span class="btn-text">Ingresar al Sistema</span>
+        <div class="btn-spinner"></div>
+      </button>
+    </div>
+
+    <!-- FORM REGISTRO -->
+    <div class="form" id="formRegistro">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" id="regNombre" placeholder="Tu nombre" autocomplete="given-name" />
+        </div>
+        <div class="form-group">
+          <label>Apellido</label>
+          <input type="text" id="regApellido" placeholder="Tu apellido" autocomplete="family-name" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>País</label>
+        <input type="text" id="regPais" placeholder="México, Colombia, Argentina..." />
+      </div>
+      <div class="form-group">
+        <label>WhatsApp (con código de país)</label>
+        <input type="tel" id="regTel" placeholder="+52 55 1234 5678" />
+      </div>
+      <div class="form-group">
+        <label>Correo electrónico</label>
+        <input type="email" id="regEmail" placeholder="tu@correo.com" autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <div class="input-pass-wrap">
+          <input type="password" id="regPass" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
+          <button type="button" class="toggle-pass" onclick="togglePass('regPass', this)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Confirmar contraseña</label>
+        <div class="input-pass-wrap">
+          <input type="password" id="regPassConfirm" placeholder="Repite tu contraseña" autocomplete="new-password" />
+          <button type="button" class="toggle-pass" onclick="togglePass('regPassConfirm', this)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <button class="btn" id="btnRegistro" onclick="doRegistro()">
+        <span class="btn-text">Crear Mi Cuenta</span>
+        <div class="btn-spinner"></div>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-note">
+    App exclusiva para líderes del sistema de expansión<br>
+    ¿Aún no formas parte del equipo? <a href="https://huracan.orygn.co" target="_blank">Únete aquí</a>
+  </div>
+
+</div>
+
+<!-- Modal Reset Contraseña -->
+<div class="modal-overlay" id="modalReset">
+  <div class="modal">
+    <h3>Recuperar Acceso</h3>
+    <p>Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.</p>
+    <div class="msg" id="resetMsg"></div>
+    <div class="form-group">
+      <label>Correo electrónico</label>
+      <input type="email" id="resetEmail" placeholder="tu@correo.com" />
+    </div>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeReset()">Cancelar</button>
+      <button class="btn-primary-sm" onclick="doReset()">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBC0jn5B7Ia6MbNqMjUY50Atghok3DCk6g",
+    authDomain: "orygn-expansion.firebaseapp.com",
+    projectId: "orygn-expansion",
+    storageBucket: "orygn-expansion.firebasestorage.app",
+    messagingSenderId: "1044610602898",
+    appId: "1:1044610602898:web:476f08bd5732b9af9e534b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Leer parámetros URL
+  const params = new URLSearchParams(window.location.search);
+  const refParam = params.get('ref') || '';
+  const telParam = params.get('tel') || '';
+  const regParam = params.get('reg') || 'huracan.orygn.co';
+
+  // Guardar en sessionStorage para uso posterior
+  if (refParam) {
+    sessionStorage.setItem('upline_ref', refParam);
+    sessionStorage.setItem('upline_tel', telParam || '525579444892');
+    sessionStorage.setItem('upline_reg', regParam);
+  }
+
+  // Mostrar badge de referido
+  if (refParam) {
+    const badge = document.getElementById('refBadge');
+    const nombre = document.getElementById('refNombre');
+    badge.classList.add('visible');
+    nombre.textContent = refParam.charAt(0).toUpperCase() + refParam.slice(1);
+  }
+
+  // Si ya está logueado, redirigir al dashboard
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      window.location.href = 'dashboard.html';
+    }
+  });
+
+  // LOGIN
+  window.doLogin = async function() {
+    const btn = document.getElementById('btnLogin');
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPass').value;
+
+    if (!email || !pass) { showMsg('Completa todos los campos', 'error'); return; }
+
+    btn.classList.add('loading');
+    btn.disabled = true;
+    clearMsg();
+
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+      // onAuthStateChanged redirige automáticamente
+    } catch (e) {
+      btn.classList.remove('loading');
+      btn.disabled = false;
+      showMsg(errorMsg(e.code), 'error');
+    }
+  };
+
+  // REGISTRO
+  window.doRegistro = async function() {
+    const btn = document.getElementById('btnRegistro');
+    const nombre = document.getElementById('regNombre').value.trim();
+    const apellido = document.getElementById('regApellido').value.trim();
+    const pais = document.getElementById('regPais').value.trim();
+    const tel = document.getElementById('regTel').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const pass = document.getElementById("regPass").value;
+    const passConfirm = document.getElementById("regPassConfirm").value;
+
+    if (!nombre || !email || !pass) { showMsg('Nombre, correo y contraseña son obligatorios', 'error'); return; }
+    if (pass.length < 6) { showMsg("La contraseña debe tener al menos 6 caracteres", "error"); return; }
+    if (pass !== passConfirm) { showMsg("Las contraseñas no coinciden. Verifica e intenta de nuevo.", "error"); return; }
+
+    btn.classList.add('loading');
+    btn.disabled = true;
+    clearMsg();
+
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      const uid = cred.user.uid;
+
+      // Guardar perfil en Firestore
+      await setDoc(doc(db, 'usuarios', uid), {
+        nombre,
+        apellido,
+        pais,
+        tel,
+        email,
+        upline_ref: sessionStorage.getItem('upline_ref') || 'ale',
+        upline_tel: sessionStorage.getItem('upline_tel') || '525579444892',
+        upline_reg: sessionStorage.getItem('upline_reg') || 'huracan.orygn.co',
+        fecha_inicio: new Date().toISOString(),
+        estrellas: 0,
+        rango: 'Nuevo',
+        creado: new Date().toISOString()
+      });
+
+      // onAuthStateChanged redirige
+    } catch (e) {
+      btn.classList.remove('loading');
+      btn.disabled = false;
+      showMsg(errorMsg(e.code), 'error');
+    }
+  };
+
+  // RESET PASSWORD
+  window.doReset = async function() {
+    const email = document.getElementById('resetEmail').value.trim();
+    const msg = document.getElementById('resetMsg');
+
+    if (!email) {
+      msg.textContent = 'Ingresa tu correo';
+      msg.className = 'msg error';
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      msg.textContent = 'Correo enviado. Revisa tu bandeja de entrada.';
+      msg.className = 'msg success';
+    } catch (e) {
+      msg.textContent = errorMsg(e.code);
+      msg.className = 'msg error';
+    }
+  };
+
+  // Helpers
+  function showMsg(text, type) {
+    const el = document.getElementById('globalMsg');
+    el.textContent = text;
+    el.className = `msg ${type}`;
+  }
+
+  function clearMsg() {
+    const el = document.getElementById('globalMsg');
+    el.className = 'msg';
+    el.textContent = '';
+  }
+
+  function errorMsg(code) {
+    const errors = {
+      'auth/user-not-found': 'No encontramos una cuenta con ese correo.',
+      'auth/wrong-password': 'Contraseña incorrecta. Intenta de nuevo.',
+      'auth/email-already-in-use': 'Ese correo ya está registrado. Ingresa con tu cuenta.',
+      'auth/invalid-email': 'El correo no tiene un formato válido.',
+      'auth/weak-password': 'La contraseña es muy corta. Usa al menos 6 caracteres.',
+      'auth/too-many-requests': 'Demasiados intentos. Espera unos minutos e intenta de nuevo.',
+      'auth/invalid-credential': 'Correo o contraseña incorrectos.',
+    };
+    return errors[code] || 'Ocurrió un error. Intenta de nuevo.';
+  }
+</script>
+
+<script>
+  // Ojito contraseña
+  function togglePass(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const isText = input.type === 'text';
+    input.type = isText ? 'password' : 'text';
+    btn.innerHTML = isText
+      ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
+      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+  }
+
+  // Tabs
+  function switchTab(tab) {
+    document.getElementById('formLogin').classList.toggle('active', tab === 'login');
+    document.getElementById('formRegistro').classList.toggle('active', tab === 'registro');
+    document.querySelectorAll('.tab').forEach((t, i) => {
+      t.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'registro' && i === 1));
+    });
+    document.getElementById('globalMsg').className = 'msg';
+  }
+
+  // Modal reset
+  function openReset() { document.getElementById('modalReset').classList.add('open'); }
+  function closeReset() { document.getElementById('modalReset').classList.remove('open'); }
+
+  // Enter key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const loginActive = document.getElementById('formLogin').classList.contains('active');
+      if (loginActive) doLogin();
+      else doRegistro();
+    }
+  });
+</script>
+
+</body>
+</html>
