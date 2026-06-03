@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Mis Prospectos — ORYGN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --naranja: #E8602A;
+      --naranja-dark: #c44e1f;
+      --negro: #050505;
+      --gris-oscuro: #111111;
+      --gris-medio: #1a1a1a;
+      --gris-borde: #2a2a2a;
+      --texto: #f0f0f0;
+      --texto-suave: #888;
+      --verde: #22c55e;
+      --azul: #3b82f6;
+      --max: 480px;
+    }
+
+    html, body {
+      background: var(--negro);
+      color: var(--texto);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: var(--max);
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOPBAR */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(5,5,5,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gris-borde);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--gris-medio);
+      border: 1px solid var(--gris-borde);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--texto-suave);
+      text-decoration: none;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover { border-color: var(--naranja); color: var(--naranja); }
+
+    .topbar-info { flex: 1; }
+
+    .topbar-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 2px;
+      line-height: 1;
+    }
+
+    .topbar-title span { color: var(--naranja); }
+
+    .topbar-sub {
+      font-size: 11px;
+      color: var(--texto-suave);
+      margin-top: 2px;
+    }
+
+    .topbar-sub span { color: var(--naranja); font-weight: 600; }
+
+    .add-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--naranja);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: white;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .add-btn:hover { background: var(--naranja-dark); transform: scale(1.05); }
+
+    /* ESTRELLAS BANNER */
+    .estrellas-banner {
+      padding: 14px 16px;
+      background: var(--gris-oscuro);
+      border-bottom: 1px solid var(--gris-borde);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .estrellas-wrap {
+      display: flex;
+      gap: 4px;
+    }
+
+    .estrella {
+      font-size: 18px;
+      filter: grayscale(1);
+      opacity: 0.3;
+      transition: all 0.3s;
+    }
+
+    .estrella.activa {
+      filter: grayscale(0);
+      opacity: 1;
+    }
+
+    .estrellas-info { flex: 1; }
+
+    .estrellas-nivel {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      letter-spacing: 1px;
+      color: var(--texto);
+    }
+
+    .estrellas-hint {
+      font-size: 11px;
+      color: var(--texto-suave);
+      margin-top: 1px;
+    }
+
+    .estrellas-hint span { color: var(--naranja); }
+
+    /* STATS ROW */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--gris-borde);
+      border-bottom: 1px solid var(--gris-borde);
+    }
+
+    .stat-item {
+      background: var(--gris-oscuro);
+      padding: 12px 8px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      color: var(--naranja);
+      line-height: 1;
+    }
+
+    .stat-lbl {
+      font-size: 9px;
+      color: var(--texto-suave);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* FILTROS */
+    .filtros-wrap {
+      padding: 12px 16px;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--gris-borde);
+      scrollbar-width: none;
+    }
+
+    .filtros-wrap::-webkit-scrollbar { display: none; }
+
+    .filtro-btn {
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--gris-borde);
+      background: none;
+      color: var(--texto-suave);
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .filtro-btn.active {
+      background: var(--naranja);
+      border-color: var(--naranja);
+      color: white;
+    }
+
+    /* LISTA */
+    .lista-wrap {
+      flex: 1;
+      padding: 12px 16px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--texto-suave);
+    }
+
+    .empty-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: var(--gris-medio);
+      border: 1px solid var(--gris-borde);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .empty-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 1px;
+      color: var(--texto);
+      margin-bottom: 8px;
+    }
+
+    .empty-desc { font-size: 13px; line-height: 1.6; }
+
+    /* CONTACTO CARD */
+    .contacto-card {
+      background: var(--gris-oscuro);
+      border: 1px solid var(--gris-borde);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: border-color 0.2s;
+      animation: slideIn 0.2s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .contacto-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .contacto-avatar.asociado {
+      background: rgba(232,96,42,0.12);
+      color: var(--naranja);
+      border: 1px solid rgba(232,96,42,0.3);
+    }
+
+    .contacto-avatar.cliente {
+      background: rgba(59,130,246,0.12);
+      color: var(--azul);
+      border: 1px solid rgba(59,130,246,0.3);
+    }
+
+    .contacto-info { flex: 1; min-width: 0; }
+
+    .contacto-nombre {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--texto);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .contacto-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .tipo-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .tipo-badge.asociado {
+      background: rgba(232,96,42,0.1);
+      color: var(--naranja);
+      border: 1px solid rgba(232,96,42,0.2);
+    }
+
+    .tipo-badge.cliente {
+      background: rgba(59,130,246,0.1);
+      color: var(--azul);
+      border: 1px solid rgba(59,130,246,0.2);
+    }
+
+    .etapa-badge {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+
+    .etapa-contactado { background: rgba(136,136,136,0.15); color: #aaa; }
+    .etapa-prospecto { background: rgba(251,191,36,0.15); color: #fbbf24; }
+    .etapa-zoom { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .etapa-funnel { background: rgba(251,146,60,0.15); color: #fb923c; }
+    .etapa-seguimiento { background: rgba(168,85,247,0.15); color: #c084fc; }
+    .etapa-cierre { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .etapa-next { background: rgba(250,204,21,0.15); color: #facc15; }
+
+    .contacto-fecha {
+      font-size: 10px;
+      color: var(--texto-suave);
+      margin-top: 3px;
+    }
+
+    .contacto-acciones {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .accion-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--gris-borde);
+      background: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--texto-suave);
+      transition: all 0.2s;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .accion-btn:hover { border-color: var(--naranja); color: var(--naranja); }
+    .accion-btn.wa:hover { border-color: #25D366; color: #25D366; }
+    .accion-btn.danger:hover { border-color: #f87171; color: #f87171; }
+
+    .accion-btn.avanzar:hover { border-color: var(--verde); color: var(--verde); }
+    .accion-btn.cierre-done { color: var(--verde); border-color: rgba(34,197,94,0.3); cursor: default; }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 100;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal-sheet {
+      background: var(--gris-oscuro);
+      border: 1px solid var(--gris-borde);
+      border-radius: 20px 20px 0 0;
+      padding: 24px 20px 40px;
+      width: 100%;
+      max-width: var(--max);
+      animation: slideUp 0.3s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .modal-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--gris-borde);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+
+    .modal-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+
+    .modal-title span { color: var(--naranja); }
+
+    .form-group { margin-bottom: 14px; }
+
+    .form-label {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--texto-suave);
+      margin-bottom: 6px;
+      display: block;
+      font-weight: 500;
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--gris-medio);
+      border: 1px solid var(--gris-borde);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: var(--texto);
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+
+    .form-input:focus { border-color: var(--naranja); }
+
+    .form-input option { background: var(--gris-oscuro); }
+
+    /* Tipo toggle */
+    .tipo-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .tipo-opt {
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid var(--gris-borde);
+      background: none;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tipo-opt .tipo-icon { font-size: 20px; margin-bottom: 4px; }
+    .tipo-opt .tipo-nombre { font-size: 13px; font-weight: 600; color: var(--texto-suave); }
+    .tipo-opt .tipo-desc { font-size: 10px; color: var(--texto-suave); margin-top: 2px; }
+
+    .tipo-opt.selected-asociado {
+      border-color: var(--naranja);
+      background: rgba(232,96,42,0.08);
+    }
+
+    .tipo-opt.selected-asociado .tipo-nombre { color: var(--naranja); }
+
+    .tipo-opt.selected-cliente {
+      border-color: var(--azul);
+      background: rgba(59,130,246,0.08);
+    }
+
+    .tipo-opt.selected-cliente .tipo-nombre { color: var(--azul); }
+
+    .modal-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--naranja);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 17px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+
+    .modal-btn:hover { background: var(--naranja-dark); }
+
+    .modal-btn-cancel {
+      width: 100%;
+      padding: 12px;
+      background: none;
+      border: 1px solid var(--gris-borde);
+      border-radius: 10px;
+      color: var(--texto-suave);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--gris-oscuro);
+      border: 1px solid var(--naranja);
+      color: var(--texto);
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      z-index: 200;
+      transition: transform 0.3s ease;
+      white-space: nowrap;
+      max-width: 90vw;
+      text-align: center;
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* HITO MODAL */
+    .hito-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 150;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .hito-overlay.open { display: flex; }
+
+    .hito-card {
+      background: var(--gris-oscuro);
+      border: 1px solid var(--naranja);
+      border-radius: 20px;
+      padding: 36px 28px;
+      text-align: center;
+      max-width: 320px;
+      width: 100%;
+      animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .hito-estrellas { font-size: 36px; margin-bottom: 12px; }
+
+    .hito-titulo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 2px;
+      color: var(--naranja);
+      margin-bottom: 8px;
+    }
+
+    .hito-texto { font-size: 13px; color: var(--texto-suave); line-height: 1.6; margin-bottom: 20px; }
+
+    .hito-btn {
+      padding: 12px 28px;
+      background: var(--naranja);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <a href="dashboard.html" class="back-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
+    <div class="topbar-info">
+      <div class="topbar-title">Mis <span>Prospectos</span></div>
+      <div class="topbar-sub">Total: <span id="totalContactos">0</span> contactos</div>
+    </div>
+    <button class="add-btn" onclick="abrirModal()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+  </div>
+
+  <!-- ESTRELLAS BANNER -->
+  <div class="estrellas-banner">
+    <div class="estrellas-wrap">
+      <span class="estrella" id="est1">⭐</span>
+      <span class="estrella" id="est2">⭐</span>
+      <span class="estrella" id="est3">⭐</span>
+      <span class="estrella" id="est4">⭐</span>
+      <span class="estrella" id="est5">⭐</span>
+    </div>
+    <div class="estrellas-info">
+      <div class="estrellas-nivel" id="estrellasNivel">Comenzando</div>
+      <div class="estrellas-hint" id="estrellasHint">Agrega tus primeros 2 contactos</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-item">
+      <div class="stat-num" id="statAsociados">0</div>
+      <div class="stat-lbl">Asociados</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statClientes">0</div>
+      <div class="stat-lbl">Clientes</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statCierres">0</div>
+      <div class="stat-lbl">Cierres</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statSeguimiento">0</div>
+      <div class="stat-lbl">Seguimiento</div>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="filtros-wrap">
+    <button class="filtro-btn active" onclick="filtrar('todos', this)">Todos</button>
+    <button class="filtro-btn" onclick="filtrar('contactado', this)">Contactado</button>
+    <button class="filtro-btn" onclick="filtrar('prospecto', this)">Prospecto</button>
+    <button class="filtro-btn" onclick="filtrar('funnel', this)">Funnel</button>
+    <button class="filtro-btn" onclick="filtrar('zoom', this)">Zoom</button>
+    <button class="filtro-btn" onclick="filtrar('seguimiento', this)">Seguimiento</button>
+    <button class="filtro-btn" onclick="filtrar('cierre', this)">Cierre</button>
+    <button class="filtro-btn" onclick="filtrar('next', this)">Next</button>
+  </div>
+
+  <!-- LISTA -->
+  <div class="lista-wrap" id="listaWrap">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="empty-title">Sin contactos aún</div>
+      <div class="empty-desc">Toca el + para agregar tu primer prospecto</div>
+    </div>
+    <div id="listaContactos"></div>
+  </div>
+
+</div>
+
+<!-- MODAL AGREGAR/EDITAR -->
+<div class="modal-overlay" id="modalContacto">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modalTitulo">Nuevo <span>Contacto</span></div>
+
+    <input type="hidden" id="editId" value="" />
+
+    <!-- TIPO -->
+    <div class="form-group">
+      <label class="form-label">Tipo de contacto</label>
+      <div class="tipo-toggle">
+        <button class="tipo-opt selected-asociado" id="tipoAsociado" onclick="seleccionarTipo('asociado')">
+          <div class="tipo-icon">🤝</div>
+          <div class="tipo-nombre">Asociado</div>
+          <div class="tipo-desc">Entra al negocio</div>
+        </button>
+        <button class="tipo-opt" id="tipoCliente" onclick="seleccionarTipo('cliente')">
+          <div class="tipo-icon">🛍️</div>
+          <div class="tipo-nombre">Cliente</div>
+          <div class="tipo-desc">Compra producto</div>
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Nombre completo</label>
+      <input type="text" class="form-input" id="inputNombre" placeholder="Nombre del contacto" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">WhatsApp (con código de país)</label>
+      <input type="tel" class="form-input" id="inputTel" placeholder="+52 55 1234 5678" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Etapa actual</label>
+      <select class="form-input" id="inputEtapa">
+        <option value="contactado">Contactado</option>
+        <option value="prospecto">Prospecto</option>
+        <option value="funnel">Funnel</option>
+        <option value="zoom">Zoom</option>
+        <option value="seguimiento">Seguimiento</option>
+        <option value="cierre">Cierre</option>
+        <option value="next">Next</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Fecha de seguimiento</label>
+      <input type="date" class="form-input" id="inputFecha" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Notas</label>
+      <input type="text" class="form-input" id="inputNotas" placeholder="Observaciones, intereses..." />
+    </div>
+
+    <button class="modal-btn" onclick="guardarContacto()">Guardar Contacto</button>
+    <button class="modal-btn-cancel" onclick="cerrarModal()">Cancelar</button>
+  </div>
+</div>
+
+<!-- HITO CELEBRACIÓN -->
+<div class="hito-overlay" id="hitoOverlay">
+  <div class="hito-card">
+    <div class="hito-estrellas" id="hitoEstrellas">⭐</div>
+    <div class="hito-titulo" id="hitoTitulo">¡Nuevo Nivel!</div>
+    <div class="hito-texto" id="hitoTexto">Seguiste avanzando.</div>
+    <button class="hito-btn" onclick="cerrarHito()">¡Vamos!</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc, collection, addDoc, getDocs, updateDoc, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBC0jn5B7Ia6MbNqMjUY50Atghok3DCk6g",
+    authDomain: "orygn-expansion.firebaseapp.com",
+    projectId: "orygn-expansion",
+    storageBucket: "orygn-expansion.firebasestorage.app",
+    messagingSenderId: "1044610602898",
+    appId: "1:1044610602898:web:476f08bd5732b9af9e534b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUid = null;
+  let contactos = [];
+  let filtroActual = 'todos';
+  let tipoSeleccionado = 'asociado';
+  let estrellasActuales = 0;
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'index.html'; return; }
+    currentUid = user.uid;
+    await cargarContactos();
+  });
+
+  async function cargarContactos() {
+    try {
+      const q = query(collection(db, 'prospectos'), where('uid', '==', currentUid));
+      const snap = await getDocs(q);
+      contactos = [];
+      snap.forEach(d => contactos.push({ id: d.id, ...d.data() }));
+      contactos.sort((a, b) => (b.creado || '') > (a.creado || '') ? 1 : -1);
+      renderLista();
+      actualizarStats();
+      actualizarEstrellas();
+    } catch(e) { console.log('Error:', e); }
+  }
+
+  function renderLista() {
+    const lista = document.getElementById('listaContactos');
+    const empty = document.getElementById('emptyState');
+    const filtrados = filtroActual === 'todos' ? contactos : contactos.filter(c => c.etapa === filtroActual);
+
+    document.getElementById('totalContactos').textContent = contactos.length;
+
+    if (filtrados.length === 0) {
+      empty.style.display = 'block';
+      lista.innerHTML = '';
+      return;
+    }
+
+    empty.style.display = 'none';
+    lista.innerHTML = filtrados.map(c => `
+      <div class="contacto-card">
+        <div class="contacto-avatar ${c.tipo}">${(c.nombre || '?').charAt(0).toUpperCase()}</div>
+        <div class="contacto-info">
+          <div class="contacto-nombre">${c.nombre || '—'}</div>
+          <div class="contacto-meta">
+            <span class="tipo-badge ${c.tipo}">${c.tipo === 'asociado' ? 'Asociado' : 'Cliente'}</span>
+            <span class="etapa-badge etapa-${c.etapa}">${c.etapa.charAt(0).toUpperCase() + c.etapa.slice(1)}</span>
+          </div>
+          ${c.fecha ? `<div class="contacto-fecha">Seguimiento: ${c.fecha}</div>` : ''}
+          ${c.notas ? `<div class="contacto-fecha">${c.notas}</div>` : ''}
+        </div>
+        <div class="contacto-acciones">
+          ${c.tel ? `<a class="accion-btn wa" href="https://wa.me/${c.tel.replace(/\D/g,'')}" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>` : ''}
+          <button class="accion-btn" onclick="editarContacto('${c.id}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          ${c.etapa !== 'cierre' && c.etapa !== 'next' ? `<button class="accion-btn avanzar" onclick="avanzarEtapa('${c.id}')" title="Avanzar etapa">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>` : `<button class="accion-btn cierre-done" disabled title="${c.etapa === 'next' ? 'Next' : 'Cierre completado'}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>`}
+          <button class="accion-btn danger" onclick="eliminarContacto('${c.id}')">>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function actualizarStats() {
+    document.getElementById('statAsociados').textContent = contactos.filter(c => c.tipo === 'asociado').length;
+    document.getElementById('statClientes').textContent = contactos.filter(c => c.tipo === 'cliente').length;
+    document.getElementById('statCierres').textContent = contactos.filter(c => c.etapa === 'cierre').length;
+    document.getElementById('statSeguimiento').textContent = contactos.filter(c => c.etapa === 'seguimiento').length;
+  }
+
+  function actualizarEstrellas() {
+    const cierres = contactos.filter(c => c.etapa === 'cierre').length;
+    const total = contactos.length;
+
+    let nivel = 0;
+    let nivelNombre = 'Comenzando';
+    let hint = 'Agrega tus primeros 2 contactos';
+
+    if (cierres >= 1) { nivel = 1; nivelNombre = 'Primer Cierre'; hint = `1 más al cierre para ⭐⭐`; }
+    if (cierres >= 2) { nivel = 2; nivelNombre = 'Binario Activo'; hint = `2 más al cierre para ⭐⭐⭐`; }
+    if (cierres >= 4) { nivel = 3; nivelNombre = '2x2 Completo'; hint = `6 más al cierre para ⭐⭐⭐⭐`; }
+    if (cierres >= 10) { nivel = 4; nivelNombre = 'Sistema Duplicando'; hint = `siguiente nivel ⭐⭐⭐⭐⭐`; }
+    if (cierres >= 20) { nivel = 5; nivelNombre = '¡Imparable!'; hint = '¡Eres imparable!'; }
+
+    // Actualizar estrellas UI
+    for (let i = 1; i <= 5; i++) {
+      const el = document.getElementById('est' + i);
+      if (el) el.classList.toggle('activa', i <= nivel);
+    }
+
+    document.getElementById('estrellasNivel').textContent = nivelNombre;
+    document.getElementById('estrellasHint').innerHTML = hint.replace('⭐', '⭐');
+
+    // Celebrar si subió de nivel
+    if (nivel > estrellasActuales && estrellasActuales > 0) {
+      mostrarHito(nivel);
+    }
+    estrellasActuales = nivel;
+
+    // Sincronizar estrellas con Firestore del usuario
+    sincronizarEstrellas(nivel);
+  }
+
+  async function sincronizarEstrellas(nivel) {
+    try {
+      await setDoc(doc(db, 'usuarios', currentUid), { estrellas: nivel }, { merge: true });
+    } catch(e) {}
+  }
+
+  // Conexión con Plan 10K
+  async function sincronizarPlan10k() {
+    try {
+      const snap = await getDoc(doc(db, 'usuarios', currentUid));
+      const plan10k = snap.exists() ? (snap.data().plan10k || {}) : {};
+
+      const asociadosCierre = contactos.filter(c => c.tipo === 'asociado' && c.etapa === 'cierre');
+      const clientesCierre = contactos.filter(c => c.tipo === 'cliente' && c.etapa === 'cierre');
+
+      // Plan $200 — asociados
+      if (asociadosCierre.length >= 1) plan10k['200-s1'] = true;
+      if (asociadosCierre.length >= 2) plan10k['200-s2'] = true;
+      // Plan $200 — clientes
+      if (clientesCierre.length >= 1) plan10k['200-c1'] = true;
+      // Plan $500 — asociados
+      if (asociadosCierre.length >= 3) plan10k['500-s3'] = true;
+      if (asociadosCierre.length >= 4) plan10k['500-s4'] = true;
+      // Plan $500 — clientes
+      if (clientesCierre.length >= 2) plan10k['500-c2'] = true;
+      if (clientesCierre.length >= 3) plan10k['500-c3'] = true;
+      if (clientesCierre.length >= 4) plan10k['500-c4'] = true;
+      // Plan $1K
+      if (asociadosCierre.length >= 5) plan10k['1k-s3'] = true;
+      if (clientesCierre.length >= 5) plan10k['1k-c5'] = true;
+
+      await setDoc(doc(db, 'usuarios', currentUid), { plan10k }, { merge: true });
+    } catch(e) { console.log('Error sync plan10k:', e); }
+  }
+
+  // GUARDAR CONTACTO
+  window.guardarContacto = async function() {
+    const nombre = document.getElementById('inputNombre').value.trim();
+    const tel = document.getElementById('inputTel').value.trim();
+    const etapa = document.getElementById('inputEtapa').value;
+    const fecha = document.getElementById('inputFecha').value;
+    const notas = document.getElementById('inputNotas').value.trim();
+    const editId = document.getElementById('editId').value;
+
+    if (!nombre) { mostrarToast('El nombre es obligatorio'); return; }
+
+    const data = { uid: currentUid, nombre, tel, tipo: tipoSeleccionado, etapa, fecha, notas, creado: new Date().toISOString() };
+
+    try {
+      if (editId) {
+        await updateDoc(doc(db, 'prospectos', editId), { nombre, tel, tipo: tipoSeleccionado, etapa, fecha, notas });
+        mostrarToast('Contacto actualizado');
+      } else {
+        await addDoc(collection(db, 'prospectos'), data);
+        mostrarToast('Contacto agregado');
+      }
+      cerrarModal();
+      await cargarContactos();
+      await sincronizarPlan10k();
+    } catch(e) { mostrarToast('Error al guardar'); console.log(e); }
+  };
+
+  window.editarContacto = function(id) {
+    const c = contactos.find(x => x.id === id);
+    if (!c) return;
+    document.getElementById('editId').value = id;
+    document.getElementById('modalTitulo').innerHTML = 'Editar <span>Contacto</span>';
+    document.getElementById('inputNombre').value = c.nombre || '';
+    document.getElementById('inputTel').value = c.tel || '';
+    document.getElementById('inputEtapa').value = c.etapa || 'contactado';
+    document.getElementById('inputFecha').value = c.fecha || '';
+    document.getElementById('inputNotas').value = c.notas || '';
+    seleccionarTipo(c.tipo || 'asociado');
+    document.getElementById('modalContacto').classList.add('open');
+  };
+
+  window.eliminarContacto = async function(id) {
+    if (!confirm('¿Eliminar este contacto?')) return;
+    try {
+      await deleteDoc(doc(db, 'prospectos', id));
+      await cargarContactos();
+      await sincronizarPlan10k();
+      mostrarToast('Contacto eliminado');
+    } catch(e) { mostrarToast('Error al eliminar'); }
+  };
+
+  // FILTROS
+  window.avanzarEtapa = async function(id) {
+    const etapas = ['contactado','prospecto','funnel','zoom','seguimiento','cierre','next'];
+    const c = contactos.find(x => x.id === id);
+    if (!c) return;
+    const idx = etapas.indexOf(c.etapa);
+    if (idx === etapas.length - 1) return;
+    const nuevaEtapa = etapas[idx + 1];
+    try {
+      await updateDoc(doc(db, 'prospectos', id), { etapa: nuevaEtapa });
+      mostrarToast(`${c.nombre} → ${nuevaEtapa.charAt(0).toUpperCase() + nuevaEtapa.slice(1)}`);
+      await cargarContactos();
+      await sincronizarPlan10k();
+    } catch(e) { mostrarToast('Error al actualizar'); }
+  };
+
+  window.filtrar = function(etapa, btn) {
+    filtroActual = etapa;
+    document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderLista();
+  };
+
+  // TIPO
+  window.seleccionarTipo = function(tipo) {
+    tipoSeleccionado = tipo;
+    document.getElementById('tipoAsociado').className = 'tipo-opt' + (tipo === 'asociado' ? ' selected-asociado' : '');
+    document.getElementById('tipoCliente').className = 'tipo-opt' + (tipo === 'cliente' ? ' selected-cliente' : '');
+  };
+
+  // MODAL
+  window.abrirModal = function() {
+    document.getElementById('editId').value = '';
+    document.getElementById('modalTitulo').innerHTML = 'Nuevo <span>Contacto</span>';
+    document.getElementById('inputNombre').value = '';
+    document.getElementById('inputTel').value = '';
+    document.getElementById('inputEtapa').value = 'contactado';
+    document.getElementById('inputFecha').value = '';
+    document.getElementById('inputNotas').value = '';
+    seleccionarTipo('asociado');
+    document.getElementById('modalContacto').classList.add('open');
+  };
+
+  window.cerrarModal = function() {
+    document.getElementById('modalContacto').classList.remove('open');
+  };
+
+  // HITO
+  function mostrarHito(nivel) {
+    const hitos = {
+      1: ['⭐', '¡Primer Cierre!', 'Cerraste tu primer contacto. El sistema funciona.'],
+      2: ['⭐⭐', '¡Binario Activo!', '2 cierres. Tu binario ya genera ingresos.'],
+      3: ['⭐⭐⭐', '¡2x2 Completo!', '4 cierres. Bono Estilo de Vida activado.'],
+      4: ['⭐⭐⭐⭐', '¡Sistema Duplicando!', '10 cierres. El negocio trabaja solo.'],
+      5: ['⭐⭐⭐⭐⭐', '¡Imparable!', '20 cierres. Eres una máquina. El Plan 10K es tuyo.']
+    };
+    const [ests, titulo, texto] = hitos[nivel] || ['⭐', '¡Nuevo Nivel!', ''];
+    document.getElementById('hitoEstrellas').textContent = ests;
+    document.getElementById('hitoTitulo').textContent = titulo;
+    document.getElementById('hitoTexto').textContent = texto;
+    document.getElementById('hitoOverlay').classList.add('open');
+  }
+
+  window.cerrarHito = function() {
+    document.getElementById('hitoOverlay').classList.remove('open');
+  };
+
+  // TOAST
+  function mostrarToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+</script>
+
+</body>
+</html>
