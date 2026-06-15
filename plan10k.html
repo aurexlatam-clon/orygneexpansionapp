@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Plan 10K — ORYGN Expansión</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --naranja: #E8602A;
+      --naranja-dark: #c44e1f;
+      --negro: #050505;
+      --gris-oscuro: #111111;
+      --gris-medio: #1a1a1a;
+      --gris-borde: #2a2a2a;
+      --texto: #f0f0f0;
+      --texto-suave: #888;
+      --verde: #22c55e;
+      --max: 480px;
+    }
+
+    html, body {
+      background: var(--negro);
+      color: var(--texto);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: var(--max);
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOPBAR */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(5,5,5,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gris-borde);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--gris-medio);
+      border: 1px solid var(--gris-borde);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--texto-suave);
+      text-decoration: none;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover { border-color: var(--naranja); color: var(--naranja); }
+
+    .topbar-info { flex: 1; }
+
+    .topbar-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 2px;
+      color: var(--texto);
+      line-height: 1;
+    }
+
+    .topbar-title span { color: var(--naranja); }
+
+    .topbar-pts {
+      font-size: 11px;
+      color: var(--texto-suave);
+      margin-top: 2px;
+    }
+
+    .pts-num { color: var(--naranja); font-weight: 600; }
+
+    /* BARRA PROGRESO GLOBAL */
+    .progreso-global {
+      padding: 16px;
+      border-bottom: 1px solid var(--gris-borde);
+      background: var(--gris-oscuro);
+    }
+
+    .progreso-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .progreso-label {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--texto-suave);
+    }
+
+    .progreso-pct {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      color: var(--naranja);
+    }
+
+    .barra-wrap {
+      height: 8px;
+      background: var(--gris-medio);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .barra-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--naranja-dark), var(--naranja));
+      border-radius: 4px;
+      transition: width 0.5s ease;
+      width: 0%;
+      min-width: 0;
+    }
+
+    .planes-etapas {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .etapa-dot {
+      flex: 1;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--gris-borde);
+      transition: background 0.3s;
+    }
+
+    .etapa-dot.activa { background: var(--naranja); }
+    .etapa-dot.completa { background: var(--verde); }
+
+    /* CONTENIDO */
+    .content {
+      flex: 1;
+      padding: 16px;
+      padding-bottom: 40px;
+    }
+
+    /* PLAN CARD */
+    .plan-card {
+      background: var(--gris-oscuro);
+      border: 1px solid var(--gris-borde);
+      border-radius: 16px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+
+    .plan-card.activo { border-color: rgba(232,96,42,0.4); }
+    .plan-card.completo { border-color: rgba(34,197,94,0.3); }
+
+    /* ACCORDION HEADER */
+    .plan-header {
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .plan-numero {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--gris-medio);
+      border: 1px solid var(--gris-borde);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      color: var(--texto-suave);
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
+
+    .plan-card.activo .plan-numero {
+      background: rgba(232,96,42,0.1);
+      border-color: var(--naranja);
+      color: var(--naranja);
+    }
+
+    .plan-card.completo .plan-numero {
+      background: rgba(34,197,94,0.1);
+      border-color: var(--verde);
+      color: var(--verde);
+    }
+
+    .plan-card.bloqueado .plan-numero {
+      opacity: 0.4;
+    }
+
+    .plan-header-info { flex: 1; }
+
+    .plan-semana {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--texto-suave);
+      margin-bottom: 2px;
+    }
+
+    .plan-monto {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      color: var(--texto);
+      line-height: 1;
+    }
+
+    .plan-card.bloqueado .plan-monto { opacity: 0.4; }
+
+    .plan-status {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      flex-shrink: 0;
+    }
+
+    .plan-status.verde {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: #86efac;
+    }
+
+    .plan-status.naranja {
+      background: rgba(232,96,42,0.1);
+      border: 1px solid rgba(232,96,42,0.3);
+      color: var(--naranja);
+    }
+
+    .plan-status.gris {
+      background: var(--gris-medio);
+      border: 1px solid var(--gris-borde);
+      color: var(--texto-suave);
+    }
+
+    .plan-chevron {
+      color: var(--texto-suave);
+      transition: transform 0.3s;
+      flex-shrink: 0;
+    }
+
+    .plan-chevron.open { transform: rotate(90deg); }
+
+    /* ACCORDION BODY */
+    .plan-body {
+      display: none;
+      border-top: 1px solid var(--gris-borde);
+    }
+
+    .plan-body.open { display: block; }
+
+    /* MINI PROGRESO DEL PLAN */
+    .plan-progreso {
+      padding: 12px 18px;
+      background: var(--gris-medio);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .plan-barra-wrap {
+      flex: 1;
+      height: 6px;
+      background: var(--gris-borde);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .plan-barra-fill {
+      height: 100%;
+      background: var(--naranja);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .plan-barra-fill.verde { background: var(--verde); }
+
+    .plan-pct-txt {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      color: var(--naranja);
+      flex-shrink: 0;
+    }
+
+    /* SECCIÓN DENTRO DEL PLAN */
+    .plan-seccion {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--gris-borde);
+    }
+
+    .seccion-titulo {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--naranja);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    /* CHECK ITEMS */
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .check-item:last-child { margin-bottom: 0; }
+
+    .chk {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      border: 2px solid var(--gris-borde);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      color: transparent;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .chk:hover { border-color: var(--naranja); }
+
+    .chk.done {
+      background: var(--naranja);
+      border-color: var(--naranja);
+      color: white;
+    }
+
+    .chk.heredado {
+      background: rgba(34,197,94,0.15);
+      border-color: var(--verde);
+      color: var(--verde);
+      cursor: default;
+    }
+
+    .chk.disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .check-label {
+      font-size: 13px;
+      color: var(--texto);
+      line-height: 1.4;
+    }
+
+    .check-label.heredado-txt { color: var(--texto-suave); text-decoration: line-through; }
+
+    .check-pts {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--naranja);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* TABLA ACCIONES DIARIAS */
+    .tabla-acciones {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .tabla-acciones th {
+      padding: 6px 4px;
+      text-align: center;
+      color: var(--texto-suave);
+      font-weight: 500;
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    .tabla-acciones td {
+      padding: 6px 4px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .tabla-acciones td:first-child {
+      text-align: left;
+      color: var(--texto-suave);
+      font-size: 11px;
+      padding-left: 0;
+      padding-right: 8px;
+      white-space: nowrap;
+    }
+
+    .tabla-chk {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 1.5px solid var(--gris-borde);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: transparent;
+      -webkit-tap-highlight-color: transparent;
+      margin: 0 auto;
+    }
+
+    .tabla-chk:hover { border-color: var(--naranja); }
+
+    .tabla-chk.done {
+      background: var(--naranja);
+      border-color: var(--naranja);
+      color: white;
+    }
+
+    /* TOTAL DEL PLAN */
+    .plan-total {
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(232,96,42,0.04);
+    }
+
+    .plan-total-label { font-size: 12px; color: var(--texto-suave); }
+
+    .plan-total-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      color: var(--naranja);
+    }
+
+    /* PLAN $10K BLOQUEADO */
+    .plan-10k-body {
+      padding: 32px 20px;
+      text-align: center;
+      border-top: 1px solid var(--gris-borde);
+    }
+
+    .lock-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--gris-medio);
+      border: 1px solid var(--gris-borde);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      color: var(--texto-suave);
+    }
+
+    .lock-monto {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      color: var(--texto-suave);
+      opacity: 0.4;
+      margin-bottom: 8px;
+    }
+
+    .lock-texto {
+      font-size: 13px;
+      color: var(--texto-suave);
+      line-height: 1.7;
+      max-width: 240px;
+      margin: 0 auto;
+    }
+
+    .lock-badge {
+      display: inline-block;
+      margin-top: 16px;
+      background: rgba(232,96,42,0.06);
+      border: 1px dashed rgba(232,96,42,0.3);
+      color: var(--naranja);
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 20px;
+    }
+
+    /* CELEBRACIÓN */
+    .celebracion {
+      display: none;
+      text-align: center;
+      padding: 24px 20px;
+      background: linear-gradient(135deg, rgba(232,96,42,0.08), rgba(232,96,42,0.02));
+      border: 1px solid rgba(232,96,42,0.2);
+      border-radius: 16px;
+      margin-bottom: 12px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .celebracion.visible { display: block; }
+
+    .celebracion-emoji { font-size: 40px; margin-bottom: 8px; }
+
+    .celebracion-titulo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 2px;
+      color: var(--naranja);
+      margin-bottom: 6px;
+    }
+
+    .celebracion-texto {
+      font-size: 13px;
+      color: var(--texto-suave);
+      line-height: 1.6;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <a href="dashboard.html" class="back-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
+    <div class="topbar-info">
+      <div class="topbar-title">Plan <span>10K</span></div>
+      <div class="topbar-pts">Tu avance total: <span class="pts-num" id="ptsTotal">0%</span></div>
+    </div>
+  </div>
+
+  <!-- BARRA PROGRESO GLOBAL -->
+  <div class="progreso-global">
+    <div class="progreso-header">
+      <div class="progreso-label">Tu avance general</div>
+      <div class="progreso-pct" id="pctGlobal">0%</div>
+    </div>
+    <div class="barra-wrap">
+      <div class="barra-fill" id="barraGlobal"></div>
+    </div>
+    <div class="planes-etapas">
+      <div class="etapa-dot activa" id="etapa-200"></div>
+      <div class="etapa-dot" id="etapa-500"></div>
+      <div class="etapa-dot" id="etapa-1k"></div>
+      <div class="etapa-dot" id="etapa-10k"></div>
+    </div>
+  </div>
+
+  <!-- CONTENIDO -->
+  <div class="content">
+
+    <!-- POP CELEBRACIÓN CON CONFETI (primera vez) -->
+    <div id="popCelebracion" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.85);align-items:center;justify-content:center;flex-direction:column;">
+      <canvas id="confettiCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;"></canvas>
+      <div style="position:relative;z-index:2;text-align:center;padding:30px 24px;max-width:320px;">
+        <div style="font-size:52px;margin-bottom:12px;">🎯</div>
+        <div id="popTitulo" style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;color:#fff;margin-bottom:8px;"></div>
+        <div id="popTexto" style="font-size:14px;color:#ccc;line-height:1.5;margin-bottom:24px;"></div>
+        <button onclick="cerrarPop()" style="background:var(--naranja);border:none;border-radius:10px;padding:12px 32px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:white;cursor:pointer;">CONTINUAR</button>
+      </div>
+    </div>
+
+    <!-- BARRA PROGRESO DUAL -->
+    <div style="background:var(--gris-medio);border:1px solid var(--gris-borde);border-radius:12px;padding:14px 16px;margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;color:#888;">PROGRESO HACIA</span>
+        <span id="metaLabel" style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--naranja);">$1,000</span>
+      </div>
+
+      <!-- Barra principal -->
+      <div style="position:relative;height:10px;background:#1e1e1e;border-radius:10px;margin-bottom:24px;">
+        <div id="barraProgreso10k" style="height:100%;border-radius:10px;background:linear-gradient(90deg,#E8602A,#ff8c5a);transition:width 0.8s ease;width:0%;"></div>
+
+        <!-- Marcador A — 20% de meta -->
+        <div style="position:absolute;top:50%;left:20%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;border:2px solid #555;background:#050505;display:flex;align-items:center;justify-content:center;z-index:2;" id="marcadorA">
+          <div id="marcadorAinner" style="width:6px;height:6px;border-radius:50%;background:#333;"></div>
+        </div>
+        <!-- Marcador B — 50% de meta -->
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;border:2px solid #555;background:#050505;display:flex;align-items:center;justify-content:center;z-index:2;" id="marcadorB">
+          <div id="marcadorBinner" style="width:6px;height:6px;border-radius:50%;background:#333;"></div>
+        </div>
+        <!-- Marcador C — 100% de meta -->
+        <div style="position:absolute;top:50%;left:100%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;border:2px solid #555;background:#050505;display:flex;align-items:center;justify-content:center;z-index:2;" id="marcadorC">
+          <div id="marcadorCinner" style="width:6px;height:6px;border-radius:50%;background:#333;"></div>
+        </div>
+
+        <!-- Punto actual -->
+        <div id="puntoActual10k" style="position:absolute;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:var(--naranja);box-shadow:0 0 8px rgba(232,96,42,0.8);transition:left 0.8s ease;left:0%;display:none;z-index:3;"></div>
+      </div>
+
+      <!-- Etiquetas -->
+      <div style="position:relative;height:36px;">
+        <div style="position:absolute;left:20%;transform:translateX(-50%);text-align:center;">
+          <div id="labelA" style="font-size:10px;color:#888;font-weight:600;white-space:nowrap;">$200</div>
+          <div id="checkA" style="font-size:12px;color:#888;margin-top:2px;">○</div>
+        </div>
+        <div style="position:absolute;left:50%;transform:translateX(-50%);text-align:center;">
+          <div id="labelB" style="font-size:10px;color:#888;font-weight:600;white-space:nowrap;">$500</div>
+          <div id="checkB" style="font-size:12px;color:#888;margin-top:2px;">○</div>
+        </div>
+        <div style="position:absolute;left:100%;transform:translateX(-50%);text-align:center;">
+          <div id="labelC" style="font-size:10px;color:#888;font-weight:600;white-space:nowrap;">$1K</div>
+          <div id="checkC" style="font-size:12px;color:#888;margin-top:2px;">○</div>
+        </div>
+      </div>
+
+      <!-- Total actual -->
+      <div style="text-align:center;margin-top:4px;">
+        <span style="font-size:11px;color:#888;">Llevas </span>
+        <span id="totalActual10k" style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--naranja);">$0</span>
+        <span id="metaSufijo" style="font-size:11px;color:#888;"> de $1,000</span>
+      </div>
+    </div>
+
+    <!-- FECHA INICIO + DÍAS ACTIVOS -->
+    <div style="margin:0 0 8px;background:rgba(232,96,42,0.06);border:1px solid rgba(232,96,42,0.2);border-radius:10px;padding:10px 14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <div>
+          <div style="font-size:10px;color:#888;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px;">Inicio en ORYGN</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--naranja);" id="diasActivosLabel">— días activo</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
+          <input type="date" id="inputFechaInicio"
+            style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:6px 9px;font-size:12px;color:#f0f0f0;font-family:'Inter',sans-serif;outline:none;"
+            onfocus="this.style.borderColor='var(--naranja)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" />
+          <button onclick="guardarFechaInicio()" style="background:var(--naranja);border:none;border-radius:7px;padding:5px 12px;color:white;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;">GUARDAR</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- INDICADOR CIERRES CRM -->
+    <div style="margin:0 0 10px;background:rgba(232,96,42,0.08);border:1px solid rgba(232,96,42,0.2);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#888;" id="cierresCRMIndicador">
+      <span>Cargando cierres del CRM...</span>
+    </div>
+
+    <!-- ===== PLAN $200 ===== -->
+    <div class="plan-card activo" id="card-200">
+      <div class="plan-header" onclick="togglePlan('200')">
+        <div class="plan-numero" id="num-200">1</div>
+        <div class="plan-header-info">
+          <div class="plan-semana">Semana 1 · Las primeras 48h definen tu negocio</div>
+          <div class="plan-monto">$200</div>
+        </div>
+        <div class="plan-status naranja" id="status-200">Activo</div>
+        <svg class="plan-chevron open" id="chev-200" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <!-- Mensaje felicidades colapsable plan $200 -->
+      <div id="feliz-200" style="display:none;background:rgba(232,96,42,0.08);border-top:1px solid rgba(232,96,42,0.2);padding:12px 16px;font-size:13px;color:#ccc;line-height:1.6;"></div>
+
+      <div class="plan-body open" id="body-200">
+        <!-- Mini progreso -->
+        <div class="plan-progreso">
+          <div class="plan-barra-wrap">
+            <div class="plan-barra-fill" id="barra-200" style="width:0%"></div>
+          </div>
+          <div class="plan-pct-txt" id="pct-200">0%</div>
+        </div>
+
+        <!-- SOCIOS -->
+        <div class="plan-seccion">
+          <div class="seccion-titulo">Asociados directos — primeras 48h</div>
+          <div class="check-item">
+            <div class="chk" id="chk-200-s1" onclick="toggleCheck('200-s1', 10)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="check-label">Asociado 1 registrado</div>
+            <div class="check-pts">+10 pts</div>
+          </div>
+          <div class="check-item">
+            <div class="chk" id="chk-200-s2" onclick="toggleCheck('200-s2', 10)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="check-label">Asociado 2 registrado — binario activado</div>
+            <div class="check-pts">+10 pts</div>
+          </div>
+        </div>
+
+        <!-- CLIENTES -->
+        <div class="plan-seccion">
+          <div class="seccion-titulo">Cliente consumidor</div>
+          <div class="check-item">
+            <div class="chk" id="chk-200-c1" onclick="toggleCheck('200-c1', 10)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="check-label">Cliente 1 con 3-Pack</div>
+            <div class="check-pts">+10 pts</div>
+          </div>
+        </div>
+
+        <!-- ACCIONES DIARIAS -->
+        <div class="plan-seccion">
+          <div class="seccion-titulo">Acciones diarias — 7 días</div>
+          <div style="overflow-x:auto;">
+            <table class="tabla-acciones">
+              <thead>
+                <tr>
+                  <th>Acción</th>
+                  <th>D1</th><th>D2</th><th>D3</th><th>D4</th><th>D5</th><th>D6</th><th>D7</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-200">
+                <tr>
+                  <td>Lista 10 contactos</td>
+                  <td><div class="tabla-chk" id="chk-200-a1-1" onclick="toggleCheck('200-a1-1',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a1-2" onclick="toggleCheck('200-a1-2',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a1-3" onclick="toggleCheck('200-a1-3',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a1-4" onclick="toggleCheck('200-a1-4',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a1-5" onclick="toggleCheck('200-a1-5',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a1-6" onclick="toggleCheck('200-a1-6',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a1-7" onclick="toggleCheck('200-a1-7',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                </tr>
+                <tr>
+                  <td>5 contactos/día</td>
+                  <td><div class="tabla-chk" id="chk-200-a2-1" onclick="toggleCheck('200-a2-1',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a2-2" onclick="toggleCheck('200-a2-2',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a2-3" onclick="toggleCheck('200-a2-3',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a2-4" onclick="toggleCheck('200-a2-4',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a2-5" onclick="toggleCheck('200-a2-5',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a2-6" onclick="toggleCheck('200-a2-6',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a2-7" onclick="toggleCheck('200-a2-7',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                </tr>
+                <tr>
+                  <td>Envía funnel</td>
+                  <td><div class="tabla-chk" id="chk-200-a3-1" onclick="toggleCheck('200-a3-1',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a3-2" onclick="toggleCheck('200-a3-2',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a3-3" onclick="toggleCheck('200-a3-3',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a3-4" onclick="toggleCheck('200-a3-4',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a3-5" onclick="toggleCheck('200-a3-5',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a3-6" onclick="toggleCheck('200-a3-6',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a3-7" onclick="toggleCheck('200-a3-7',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                </tr>
+                <tr>
+                  <td>Seguimiento</td>
+                  <td><div class="tabla-chk" id="chk-200-a4-1" onclick="toggleCheck('200-a4-1',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a4-2" onclick="toggleCheck('200-a4-2',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a4-3" onclick="toggleCheck('200-a4-3',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a4-4" onclick="toggleCheck('200-a4-4',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a4-5" onclick="toggleCheck('200-a4-5',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a4-6" onclick="toggleCheck('200-a4-6',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-200-a4-7" onclick="toggleCheck('200-a4-7',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- INGRESOS ADICIONALES -->
+        <div class="plan-seccion" style="margin-top:12px;">
+          <div class="seccion-titulo">Ingresos Adicionales</div>
+          <div style="background:var(--gris-oscuro);border:1px solid rgba(232,96,42,0.2);border-radius:10px;padding:12px;margin-top:8px;">
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                <label style="font-size:12px;color:#888;white-space:nowrap;">Bono Estilo de Vida</label>
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <span style="font-size:13px;color:var(--naranja);">$</span>
+                  <input type="number" id="inputBEV" min="0" step="0.01" placeholder="0.00"
+                    style="width:90px;background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:7px 9px;font-size:13px;color:#f0f0f0;font-family:'Inter',sans-serif;outline:none;text-align:right;"
+                    onfocus="this.style.borderColor='var(--naranja)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" />
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                <label style="font-size:12px;color:#888;white-space:nowrap;">Binario cobrado</label>
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <span style="font-size:13px;color:var(--naranja);">$</span>
+                  <input type="number" id="inputBinario" min="0" step="0.01" placeholder="0.00"
+                    style="width:90px;background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:7px 9px;font-size:13px;color:#f0f0f0;font-family:'Inter',sans-serif;outline:none;text-align:right;"
+                    onfocus="this.style.borderColor='var(--naranja)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" />
+                </div>
+              </div>
+              <button onclick="guardarIngresosAdicionales('200')"
+                style="width:100%;padding:9px;background:var(--naranja);color:white;border:none;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;cursor:pointer;margin-top:4px;">
+                ACTUALIZAR
+              </button>
+            </div>
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:11px;color:#888;letter-spacing:0.5px;">TOTAL ACUMULADO</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--naranja);" id="totalAcumulado">$0.00</span>
+            </div>
+            <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:11px;color:#888;letter-spacing:0.5px;">DÍAS EN LOGRARLO</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--naranja);" id="diasPlan200">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="plan-total">
+          <span class="plan-total-label">Estimado semana 1</span>
+          <span class="plan-total-num">~$150-$200</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PLAN $500 ===== -->
+    <div class="plan-card bloqueado" id="card-500">
+      <div class="plan-header" onclick="togglePlan('500')">
+        <div class="plan-numero" id="num-500">2</div>
+        <div class="plan-header-info">
+          <div class="plan-semana">Semana 2 · Poder del Producto</div>
+          <div class="plan-monto">$500</div>
+        </div>
+        <div class="plan-status gris" id="status-500">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Bloqueado
+        </div>
+        <svg class="plan-chevron" id="chev-500" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <!-- Mensaje felicidades colapsable plan $500 -->
+      <div id="feliz-500" style="display:none;background:rgba(232,96,42,0.08);border-top:1px solid rgba(232,96,42,0.2);padding:12px 16px;font-size:13px;color:#ccc;line-height:1.6;"></div>
+      <div class="plan-body" id="body-500">
+        <div class="plan-progreso">
+          <div class="plan-barra-wrap"><div class="plan-barra-fill" id="barra-500" style="width:0%"></div></div>
+          <div class="plan-pct-txt" id="pct-500">0%</div>
+        </div>
+        <div class="plan-seccion">
+          <div class="seccion-titulo">Asociados — 4 en total (2 ya tienes ✓)</div>
+          <div class="check-item">
+            <div class="chk heredado" id="chk-500-s1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="check-label heredado-txt">Asociado 1 — heredado</div>
+          </div>
+          <div class="check-item">
+            <div class="chk heredado" id="chk-500-s2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="check-label heredado-txt">Asociado 2 — heredado</div>
+          </div>
+          <div class="check-item">
+            <div class="chk" id="chk-500-s3" onclick="toggleCheck('500-s3',10)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="check-label">Asociado directo de tu Asociado 1</div>
+            <div class="check-pts">+10 pts</div>
+          </div>
+          <div class="check-item">
+            <div class="chk" id="chk-500-s4" onclick="toggleCheck('500-s4',10)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="check-label">Directo de tu Asociado 2 registrado — 2x2 completo</div>
+            <div class="check-pts">+10 pts</div>
+          </div>
+        </div>
+        <div class="plan-seccion">
+          <div class="seccion-titulo">Clientes — 4 en total (1 ya tienes ✓)</div>
+          <div class="check-item">
+            <div class="chk heredado"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="check-label heredado-txt">Cliente 1 — heredado</div>
+          </div>
+          <div class="check-item">
+            <div class="chk" id="chk-500-c2" onclick="toggleCheck('500-c2',10)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="check-label">Cliente 2 con tu testimonio</div>
+            <div class="check-pts">+10 pts</div>
+          </div>
+          <div class="check-item">
+            <div class="chk" id="chk-500-c3" onclick="toggleCheck('500-c3',10)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="check-label">Cliente 3 — producto gratis en camino</div>
+            <div class="check-pts">+10 pts</div>
+          </div>
+          <div class="check-item">
+            <div class="chk" id="chk-500-c4" onclick="toggleCheck('500-c4',10)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="check-label">Cliente 4 — producto ya cubierto</div>
+            <div class="check-pts">+10 pts</div>
+          </div>
+        </div>
+        <div class="plan-seccion">
+          <div class="seccion-titulo">Acciones diarias — 7 días</div>
+          <div style="overflow-x:auto;">
+            <table class="tabla-acciones">
+              <thead><tr><th>Acción</th><th>D1</th><th>D2</th><th>D3</th><th>D4</th><th>D5</th><th>D6</th><th>D7</th></tr></thead>
+              <tbody>
+                <tr><td>5 contactos/día</td>
+                  <td><div class="tabla-chk" id="chk-500-a1-1" onclick="toggleCheck('500-a1-1',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a1-2" onclick="toggleCheck('500-a1-2',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a1-3" onclick="toggleCheck('500-a1-3',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a1-4" onclick="toggleCheck('500-a1-4',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a1-5" onclick="toggleCheck('500-a1-5',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a1-6" onclick="toggleCheck('500-a1-6',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a1-7" onclick="toggleCheck('500-a1-7',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                </tr>
+                <tr><td>Apoya a tus socios</td>
+                  <td><div class="tabla-chk" id="chk-500-a2-1" onclick="toggleCheck('500-a2-1',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a2-2" onclick="toggleCheck('500-a2-2',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a2-3" onclick="toggleCheck('500-a2-3',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a2-4" onclick="toggleCheck('500-a2-4',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a2-5" onclick="toggleCheck('500-a2-5',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a2-6" onclick="toggleCheck('500-a2-6',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a2-7" onclick="toggleCheck('500-a2-7',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                </tr>
+                <tr><td>Comparte testimonio</td>
+                  <td><div class="tabla-chk" id="chk-500-a3-1" onclick="toggleCheck('500-a3-1',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a3-2" onclick="toggleCheck('500-a3-2',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a3-3" onclick="toggleCheck('500-a3-3',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a3-4" onclick="toggleCheck('500-a3-4',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a3-5" onclick="toggleCheck('500-a3-5',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a3-6" onclick="toggleCheck('500-a3-6',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a3-7" onclick="toggleCheck('500-a3-7',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                </tr>
+                <tr><td>Seguimiento</td>
+                  <td><div class="tabla-chk" id="chk-500-a4-1" onclick="toggleCheck('500-a4-1',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a4-2" onclick="toggleCheck('500-a4-2',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a4-3" onclick="toggleCheck('500-a4-3',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a4-4" onclick="toggleCheck('500-a4-4',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a4-5" onclick="toggleCheck('500-a4-5',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a4-6" onclick="toggleCheck('500-a4-6',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-500-a4-7" onclick="toggleCheck('500-a4-7',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- INGRESOS ADICIONALES -->
+        <div class="plan-seccion" style="margin-top:12px;">
+          <div class="seccion-titulo">Ingresos Adicionales</div>
+          <div style="background:var(--gris-oscuro);border:1px solid rgba(232,96,42,0.2);border-radius:10px;padding:12px;margin-top:8px;">
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                <label style="font-size:12px;color:#888;white-space:nowrap;">Bono Estilo de Vida</label>
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <span style="font-size:13px;color:var(--naranja);">$</span>
+                  <input type="number" id="inputBEV2" min="0" step="0.01" placeholder="0.00"
+                    style="width:90px;background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:7px 9px;font-size:13px;color:#f0f0f0;font-family:'Inter',sans-serif;outline:none;text-align:right;"
+                    onfocus="this.style.borderColor='var(--naranja)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" />
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                <label style="font-size:12px;color:#888;white-space:nowrap;">Binario cobrado</label>
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <span style="font-size:13px;color:var(--naranja);">$</span>
+                  <input type="number" id="inputBinario2" min="0" step="0.01" placeholder="0.00"
+                    style="width:90px;background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:7px 9px;font-size:13px;color:#f0f0f0;font-family:'Inter',sans-serif;outline:none;text-align:right;"
+                    onfocus="this.style.borderColor='var(--naranja)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" />
+                </div>
+              </div>
+              <button onclick="guardarIngresosAdicionales('500')"
+                style="width:100%;padding:9px;background:var(--naranja);color:white;border:none;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;cursor:pointer;">
+                ACTUALIZAR
+              </button>
+            </div>
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:11px;color:#888;letter-spacing:0.5px;">TOTAL ACUMULADO</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--naranja);" id="totalAcumulado2">$0.00</span>
+            </div>
+            <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:11px;color:#888;letter-spacing:0.5px;">DÍAS EN LOGRARLO</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--naranja);" id="diasPlan500">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="plan-total">
+          <span class="plan-total-label">Estimado días 8-15</span>
+          <span class="plan-total-num">~$450-$500</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PLAN $1K ===== -->
+    <div class="plan-card bloqueado" id="card-1k">
+      <div class="plan-header" onclick="togglePlan('1k')">
+        <div class="plan-numero" id="num-1k">3</div>
+        <div class="plan-header-info">
+          <div class="plan-semana">Siguientes 15 días · Duplica Beneficios</div>
+          <div class="plan-monto">$1,000</div>
+        </div>
+        <div class="plan-status gris" id="status-1k">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Bloqueado
+        </div>
+        <svg class="plan-chevron" id="chev-1k" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <!-- Mensaje felicidades colapsable plan $1K -->
+      <div id="feliz-1k" style="display:none;background:rgba(232,96,42,0.08);border-top:1px solid rgba(232,96,42,0.2);padding:12px 16px;font-size:13px;color:#ccc;line-height:1.6;"></div>
+      <div class="plan-body" id="body-1k">
+        <div class="plan-progreso">
+          <div class="plan-barra-wrap"><div class="plan-barra-fill" id="barra-1k" style="width:0%"></div></div>
+          <div class="plan-pct-txt" id="pct-1k">0%</div>
+        </div>
+        <div class="plan-seccion">
+          <div class="seccion-titulo">Escala a 3x3 — 3 asociados directos con 3 cada uno</div>
+          <div class="check-item">
+            <div class="chk heredado"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="check-label heredado-txt">Asociados 1 y 2 — heredados</div>
+          </div>
+          <div class="check-item">
+            <div class="chk" id="chk-1k-s3" onclick="toggleCheck('1k-s3',10)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="check-label">Asociado 3 directo tuyo</div>
+            <div class="check-pts">+10 pts</div>
+          </div>
+          <div class="check-item">
+            <div class="chk" id="chk-1k-s4" onclick="toggleCheck('1k-s4',10)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="check-label">Asociado 3 tiene sus 2 — 3x3 completo</div>
+            <div class="check-pts">+10 pts</div>
+          </div>
+          <div class="check-item">
+            <div class="chk" id="chk-1k-bev" onclick="toggleCheck('1k-bev',10)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="check-label">Bono Estilo de Vida $300/mes activado</div>
+            <div class="check-pts">+10 pts</div>
+          </div>
+        </div>
+        <div class="plan-seccion">
+          <div class="seccion-titulo">Clientes — 5+ activos</div>
+          <div class="check-item">
+            <div class="chk heredado"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="check-label heredado-txt">Clientes 1-4 — heredados</div>
+          </div>
+          <div class="check-item">
+            <div class="chk" id="chk-1k-c5" onclick="toggleCheck('1k-c5',10)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="check-label">Cliente 5 — producto cubierto + ganancia extra</div>
+            <div class="check-pts">+10 pts</div>
+          </div>
+        </div>
+        <div class="plan-seccion">
+          <div class="seccion-titulo">Acciones diarias — 7 días</div>
+          <div style="overflow-x:auto;">
+            <table class="tabla-acciones">
+              <thead><tr><th>Acción</th><th>D1</th><th>D2</th><th>D3</th><th>D4</th><th>D5</th><th>D6</th><th>D7</th></tr></thead>
+              <tbody>
+                <tr><td>Revisa binario</td>
+                  <td><div class="tabla-chk" id="chk-1k-a1-1" onclick="toggleCheck('1k-a1-1',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a1-2" onclick="toggleCheck('1k-a1-2',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a1-3" onclick="toggleCheck('1k-a1-3',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a1-4" onclick="toggleCheck('1k-a1-4',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a1-5" onclick="toggleCheck('1k-a1-5',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a1-6" onclick="toggleCheck('1k-a1-6',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a1-7" onclick="toggleCheck('1k-a1-7',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                </tr>
+                <tr><td>Apoya tu equipo</td>
+                  <td><div class="tabla-chk" id="chk-1k-a2-1" onclick="toggleCheck('1k-a2-1',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a2-2" onclick="toggleCheck('1k-a2-2',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a2-3" onclick="toggleCheck('1k-a2-3',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a2-4" onclick="toggleCheck('1k-a2-4',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a2-5" onclick="toggleCheck('1k-a2-5',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a2-6" onclick="toggleCheck('1k-a2-6',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a2-7" onclick="toggleCheck('1k-a2-7',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                </tr>
+                <tr><td>Nuevo prospecto</td>
+                  <td><div class="tabla-chk" id="chk-1k-a3-1" onclick="toggleCheck('1k-a3-1',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a3-2" onclick="toggleCheck('1k-a3-2',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a3-3" onclick="toggleCheck('1k-a3-3',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a3-4" onclick="toggleCheck('1k-a3-4',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a3-5" onclick="toggleCheck('1k-a3-5',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a3-6" onclick="toggleCheck('1k-a3-6',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                  <td><div class="tabla-chk" id="chk-1k-a3-7" onclick="toggleCheck('1k-a3-7',1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- INGRESOS ADICIONALES -->
+        <div class="plan-seccion" style="margin-top:12px;">
+          <div class="seccion-titulo">Ingresos Adicionales</div>
+          <div style="background:var(--gris-oscuro);border:1px solid rgba(232,96,42,0.2);border-radius:10px;padding:12px;margin-top:8px;">
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                <label style="font-size:12px;color:#888;white-space:nowrap;">Bono Estilo de Vida</label>
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <span style="font-size:13px;color:var(--naranja);">$</span>
+                  <input type="number" id="inputBEV3" min="0" step="0.01" placeholder="0.00"
+                    style="width:90px;background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:7px 9px;font-size:13px;color:#f0f0f0;font-family:'Inter',sans-serif;outline:none;text-align:right;"
+                    onfocus="this.style.borderColor='var(--naranja)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" />
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                <label style="font-size:12px;color:#888;white-space:nowrap;">Binario cobrado</label>
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <span style="font-size:13px;color:var(--naranja);">$</span>
+                  <input type="number" id="inputBinario3" min="0" step="0.01" placeholder="0.00"
+                    style="width:90px;background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:7px 9px;font-size:13px;color:#f0f0f0;font-family:'Inter',sans-serif;outline:none;text-align:right;"
+                    onfocus="this.style.borderColor='var(--naranja)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" />
+                </div>
+              </div>
+              <button onclick="guardarIngresosAdicionales('1k')"
+                style="width:100%;padding:9px;background:var(--naranja);color:white;border:none;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;cursor:pointer;">
+                ACTUALIZAR
+              </button>
+            </div>
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:11px;color:#888;letter-spacing:0.5px;">TOTAL ACUMULADO</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--naranja);" id="totalAcumulado3">$0.00</span>
+            </div>
+            <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:11px;color:#888;letter-spacing:0.5px;">DÍAS EN LOGRARLO</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--naranja);" id="diasPlan1k">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="plan-total">
+          <span class="plan-total-label">Estimado mes 1</span>
+          <span class="plan-total-num">~$900-$1,100</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PLAN $10K BLOQUEADO ===== -->
+    <div class="plan-card bloqueado" id="card-10k">
+      <div class="plan-header">
+        <div class="plan-numero" style="opacity:0.3;">4</div>
+        <div class="plan-header-info">
+          <div class="plan-semana">Siguiente nivel</div>
+          <div class="plan-monto" style="opacity:0.3;">$10,000</div>
+        </div>
+        <div class="plan-status gris">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Bloqueado
+        </div>
+      </div>
+      <div class="plan-10k-body">
+        <div class="lock-circle">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="lock-monto">$10K</div>
+        <div class="lock-texto">Completa el Plan $1,000 para desbloquear tu ruta hacia los $10,000 USD mensuales</div>
+        <div class="lock-badge">Próximamente</div>
+        <!-- PENDIENTE: agregar regalo sorpresa y contenido Plan $10K aquí -->
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBC0jn5B7Ia6MbNqMjUY50Atghok3DCk6g",
+    authDomain: "orygn-expansion.firebaseapp.com",
+    projectId: "orygn-expansion",
+    storageBucket: "orygn-expansion.firebasestorage.app",
+    messagingSenderId: "1044610602898",
+    appId: "1:1044610602898:web:476f08bd5732b9af9e534b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Definición de planes y sus checks
+  const PLANES = {
+    '200': {
+      checks: ['200-s1','200-s2','200-c1','200-a1-1','200-a1-2','200-a1-3','200-a1-4','200-a1-5','200-a1-6','200-a1-7','200-a2-1','200-a2-2','200-a2-3','200-a2-4','200-a2-5','200-a2-6','200-a2-7','200-a3-1','200-a3-2','200-a3-3','200-a3-4','200-a3-5','200-a3-6','200-a3-7','200-a4-1','200-a4-2','200-a4-3','200-a4-4','200-a4-5','200-a4-6','200-a4-7'],
+      siguiente: '500'
+    },
+    '500': {
+      checks: ['500-s3','500-s4','500-c2','500-c3','500-c4','500-a1-1','500-a1-2','500-a1-3','500-a1-4','500-a1-5','500-a1-6','500-a1-7','500-a2-1','500-a2-2','500-a2-3','500-a2-4','500-a2-5','500-a2-6','500-a2-7','500-a3-1','500-a3-2','500-a3-3','500-a3-4','500-a3-5','500-a3-6','500-a3-7','500-a4-1','500-a4-2','500-a4-3','500-a4-4','500-a4-5','500-a4-6','500-a4-7'],
+      siguiente: '1k'
+    },
+    '1k': {
+      checks: ['1k-s3','1k-s4','1k-bev','1k-c5','1k-a1-1','1k-a1-2','1k-a1-3','1k-a1-4','1k-a1-5','1k-a1-6','1k-a1-7','1k-a2-1','1k-a2-2','1k-a2-3','1k-a2-4','1k-a2-5','1k-a2-6','1k-a2-7','1k-a3-1','1k-a3-2','1k-a3-3','1k-a3-4','1k-a3-5','1k-a3-6','1k-a3-7'],
+      siguiente: '10k'
+    }
+  };
+
+  let estadoGlobal = {};
+  let currentUid = null;
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'index.html'; return; }
+    currentUid = user.uid;
+    await cargarEstado();
+    const snap = await getDoc(doc(db, 'usuarios', currentUid));
+    const userData = snap.exists() ? snap.data() : {};
+    await cargarFechaInicio(user, userData);
+    // Actualizar días de planes con hitos guardados
+    const hitos = userData.hitos || {};
+    actualizarDiasPlan('500', 'diasPlan200', hitos);
+    actualizarDiasPlan('1k', 'diasPlan500', hitos);
+    actualizarDiasPlan('10k', 'diasPlan1k', hitos);
+    await verificarCierresCRM();
+  });
+
+  // ============ FECHA INICIO ============
+
+  let fechaInicioGlobal = null;
+
+  function calcularDias(desde) {
+    if (!desde) return null;
+    const inicio = new Date(desde);
+    const hoy = new Date();
+    const diff = Math.floor((hoy - inicio) / (1000 * 60 * 60 * 24));
+    return diff;
+  }
+
+  function actualizarDiasActivos() {
+    if (!fechaInicioGlobal) return;
+    const dias = calcularDias(fechaInicioGlobal);
+    const el = document.getElementById('diasActivosLabel');
+    if (el) el.textContent = dias + (dias === 1 ? ' día activo' : ' días activo');
+  }
+
+  function actualizarDiasPlan(planId, elId, hitos) {
+    const el = document.getElementById(elId);
+    if (!el || !fechaInicioGlobal) return;
+    const hitoFecha = hitos[planId];
+    if (hitoFecha) {
+      const dias = calcularDias(fechaInicioGlobal) - calcularDias(hitoFecha) + calcularDias(fechaInicioGlobal);
+      // Días desde inicio hasta el hito
+      const inicio = new Date(fechaInicioGlobal);
+      const hito = new Date(hitoFecha);
+      const diffDias = Math.floor((hito - inicio) / (1000 * 60 * 60 * 24)) + 1;
+      el.textContent = 'Día ' + diffDias;
+      el.style.color = 'var(--naranja)';
+    } else {
+      el.textContent = '—';
+      el.style.color = '#888';
+    }
+  }
+
+  window.guardarFechaInicio = async function() {
+    const input = document.getElementById('inputFechaInicio');
+    if (!input || !input.value) return;
+    try {
+      await setDoc(doc(db, 'usuarios', currentUid), { fechaInicio: input.value }, { merge: true });
+      fechaInicioGlobal = input.value;
+      actualizarDiasActivos();
+      mostrarToastPlan('Fecha guardada');
+    } catch(e) { mostrarToastPlan('Error al guardar'); }
+  };
+
+  async function cargarFechaInicio(user, userData) {
+    // Primero Firestore, si no Firebase Auth
+    if (userData && userData.fechaInicio) {
+      fechaInicioGlobal = userData.fechaInicio;
+    } else {
+      // Usar fecha de creación de cuenta
+      const creacion = new Date(user.metadata.creationTime);
+      fechaInicioGlobal = creacion.toISOString().split('T')[0];
+      // Guardar en Firestore para futuras sesiones
+      await setDoc(doc(db, 'usuarios', currentUid), { fechaInicio: fechaInicioGlobal }, { merge: true });
+    }
+    const input = document.getElementById('inputFechaInicio');
+    if (input) input.value = fechaInicioGlobal;
+    actualizarDiasActivos();
+  }
+
+  // Guardar hito cuando se desbloquea un plan por primera vez
+  async function guardarHitoPlan(plan) {
+    try {
+      const hoy = new Date().toISOString().split('T')[0];
+      await setDoc(doc(db, 'usuarios', currentUid), {
+        hitos: { [plan]: hoy }
+      }, { merge: true });
+    } catch(e) { console.log('Error guardando hito:', e); }
+  }
+
+  function actualizarBarra10k(totalIngresos) {
+    const modo10k = totalIngresos >= 1000;
+    const META = modo10k ? 10000 : 1000;
+
+    // Etiquetas de modo
+    const metaLabel = document.getElementById('metaLabel');
+    const metaSufijo = document.getElementById('metaSufijo');
+    if (metaLabel) metaLabel.textContent = modo10k ? '$10,000' : '$1,000';
+    if (metaSufijo) metaSufijo.textContent = modo10k ? ' de $10,000' : ' de $1,000';
+
+    // Umbrales según modo
+    const umbrales = modo10k
+      ? [
+          { monto: 1000,  pct: 10,  labelId: 'labelA', checkId: 'checkA', marcId: 'marcadorA', innerId: 'marcadorAinner', label: '$1K'  },
+          { monto: 5000,  pct: 50,  labelId: 'labelB', checkId: 'checkB', marcId: 'marcadorB', innerId: 'marcadorBinner', label: '$5K'  },
+          { monto: 10000, pct: 100, labelId: 'labelC', checkId: 'checkC', marcId: 'marcadorC', innerId: 'marcadorCinner', label: '$10K' },
+        ]
+      : [
+          { monto: 200,  pct: 20,  labelId: 'labelA', checkId: 'checkA', marcId: 'marcadorA', innerId: 'marcadorAinner', label: '$200' },
+          { monto: 500,  pct: 50,  labelId: 'labelB', checkId: 'checkB', marcId: 'marcadorB', innerId: 'marcadorBinner', label: '$500' },
+          { monto: 1000, pct: 100, labelId: 'labelC', checkId: 'checkC', marcId: 'marcadorC', innerId: 'marcadorCinner', label: '$1K'  },
+        ];
+
+    const pct = Math.min((totalIngresos / META) * 100, 100);
+
+    // Barra fill
+    const barra = document.getElementById('barraProgreso10k');
+    if (barra) barra.style.width = pct + '%';
+
+    // Punto actual
+    const punto = document.getElementById('puntoActual10k');
+    if (punto) {
+      punto.style.display = totalIngresos > 0 ? 'block' : 'none';
+      punto.style.left = Math.min(pct, 97) + '%';
+    }
+
+    // Total
+    const totalEl = document.getElementById('totalActual10k');
+    if (totalEl) totalEl.textContent = '$' + totalIngresos.toFixed(0);
+
+    // Actualizar cada marcador
+    umbrales.forEach((u, i) => {
+      const superado = totalIngresos >= u.monto;
+      const enCurso = !superado && (i === 0 || totalIngresos >= umbrales[i-1].monto);
+
+      const marc = document.getElementById(u.marcId);
+      const inner = document.getElementById(u.innerId);
+      const label = document.getElementById(u.labelId);
+      const check = document.getElementById(u.checkId);
+
+      // Actualizar etiqueta
+      if (label) label.textContent = u.label;
+
+      if (superado) {
+        if (marc) marc.style.borderColor = 'var(--naranja)';
+        if (inner) { inner.style.background = 'var(--naranja)'; inner.style.width = '8px'; inner.style.height = '8px'; }
+        if (label) label.style.color = 'var(--naranja)';
+        if (check) { check.textContent = '✓'; check.style.color = 'var(--naranja)'; check.style.fontWeight = '700'; }
+      } else if (enCurso) {
+        if (marc) marc.style.borderColor = 'rgba(232,96,42,0.5)';
+        if (inner) inner.style.background = 'rgba(232,96,42,0.3)';
+        if (label) label.style.color = 'rgba(232,96,42,0.8)';
+        if (check) { check.textContent = '→'; check.style.color = 'rgba(232,96,42,0.8)'; check.style.fontWeight = '400'; }
+      } else {
+        if (marc) marc.style.borderColor = '#555';
+        if (inner) inner.style.background = '#333';
+        if (label) label.style.color = '#888';
+        if (check) { check.textContent = '○'; check.style.color = '#888'; check.style.fontWeight = '400'; }
+      }
+    });
+  }
+
+  // Guardar ingresos adicionales por plan independiente
+  window.guardarIngresosAdicionales = async function(nivel) {
+    const bevId = nivel === '200' ? 'inputBEV' : nivel === '500' ? 'inputBEV2' : 'inputBEV3';
+    const binId = nivel === '200' ? 'inputBinario' : nivel === '500' ? 'inputBinario2' : 'inputBinario3';
+    const bev = parseFloat(document.getElementById(bevId)?.value) || 0;
+    const binario = parseFloat(document.getElementById(binId)?.value) || 0;
+    try {
+      const key = `ingresosP${nivel}`;
+      await setDoc(doc(db, 'usuarios', currentUid), { [key]: { bev, binario } }, { merge: true });
+      mostrarToastPlan('Ingresos del Plan $' + (nivel === '1k' ? '1,000' : nivel) + ' actualizados');
+      await verificarCierresCRM();
+    } catch(e) { mostrarToastPlan('Error al guardar'); console.log(e); }
+  };
+
+  function mostrarToastPlan(msg) {
+    let t = document.getElementById('toastPlan');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'toastPlan';
+      t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#222;color:#f0f0f0;padding:10px 20px;border-radius:20px;font-size:13px;z-index:999;opacity:0;transition:opacity 0.3s;';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.opacity = '1';
+    setTimeout(() => t.style.opacity = '0', 2000);
+  }
+
+  // Lee cierres reales del CRM y desbloquea planes automáticamente
+  async function verificarCierresCRM() {
+    try {
+      const q = query(collection(db, 'prospectos'), where('uid', '==', currentUid), where('etapa', '==', 'cierre'));
+      const snap = await getDocs(q);
+      let cierresAsociados = 0, cierresClientes = 0;
+      snap.forEach(d => { if ((d.data().tipo||'asociado')==='cliente') cierresClientes++; else cierresAsociados++; });
+      const bonosCRM = (cierresAsociados * 42.50) + (cierresClientes * 65.00);
+
+      const userSnap = await getDoc(doc(db, 'usuarios', currentUid));
+      const ud = userSnap.exists() ? userSnap.data() : {};
+      // Fallback: si no existen campos nuevos, usar el viejo ingresosAdicionales
+      const viejos = ud.ingresosAdicionales || { bev:0, binario:0 };
+      const p200 = ud.ingresosP200 || { bev: viejos.bev || 0, binario: viejos.binario || 0 };
+      const p500 = ud.ingresosP500 || { bev:0, binario:0 };
+      const p1k  = ud.ingresosP1k  || { bev:0, binario:0 };
+      const hitosGuardados = ud.hitos || {};
+
+      const sv = (id,v) => { const el=document.getElementById(id); if(el&&v>0) el.value=v; };
+      sv('inputBEV',p200.bev); sv('inputBinario',p200.binario);
+      sv('inputBEV2',p500.bev); sv('inputBinario2',p500.binario);
+      sv('inputBEV3',p1k.bev); sv('inputBinario3',p1k.binario);
+
+      const total200 = bonosCRM + p200.bev + p200.binario;
+      const total500 = bonosCRM + p500.bev + p500.binario;
+      const total1k  = bonosCRM + p1k.bev  + p1k.binario;
+      const totalGlobal = bonosCRM + p200.bev + p200.binario + p500.bev + p500.binario + p1k.bev + p1k.binario;
+
+      console.log(`[PLAN10K] CRM:$${bonosCRM} | P200:$${total200} | P500:$${total500} | P1K:$${total1k}`);
+
+      const indicador = document.getElementById('cierresCRMIndicador');
+      if (indicador) indicador.innerHTML = `<span>${cierresAsociados} asoc · ${cierresClientes} clientes</span><span style="color:var(--naranja)">$${bonosCRM.toFixed(2)} bonos directos</span>`;
+
+      actualizarBarra10k(totalGlobal);
+
+      const st = (id,v) => { const el=document.getElementById(id); if(el) el.textContent='$'+v.toFixed(2); };
+      st('totalAcumulado',total200); st('totalAcumulado2',total500); st('totalAcumulado3',total1k);
+
+      if (total200 >= 200) { desbloquearPlanCRM('500','¡Plan $200 Superado!',`$${total200.toFixed(2)} en Plan $200`); if(!hitosGuardados['500']) await guardarHitoPlan('500'); }
+      if (total500 >= 500) { desbloquearPlanCRM('1k','¡Plan $500 Alcanzado!',`$${total500.toFixed(2)} en Plan $500`); if(!hitosGuardados['1k']) await guardarHitoPlan('1k'); }
+      if (total1k  >= 1000){ desbloquearPlanCRM('10k','¡Tu Primer $1,000!',`$${total1k.toFixed(2)} en Plan $1K`); if(!hitosGuardados['10k']) await guardarHitoPlan('10k'); }
+
+      const snapF = await getDoc(doc(db, 'usuarios', currentUid));
+      const hitos = snapF.exists() ? (snapF.data().hitos||{}) : {};
+      const hoy = new Date();
+      const diasEntre = (desde, hasta) => !desde ? null : Math.floor(((hasta||hoy)-new Date(desde))/86400000)+1;
+
+      const e200=document.getElementById('diasPlan200');
+      if(e200&&fechaInicioGlobal){ const d=diasEntre(fechaInicioGlobal,hitos['500']?new Date(hitos['500']):null); e200.textContent=hitos['500']?`Día ${d}`:`${d} días en curso`; e200.style.color=hitos['500']?'var(--naranja)':'#888'; }
+
+      const e500=document.getElementById('diasPlan500');
+      if(e500){ if(hitos['500']){ const d=diasEntre(hitos['500'],hitos['1k']?new Date(hitos['1k']):null); e500.textContent=hitos['1k']?`Día ${d}`:`${d} días en curso`; e500.style.color=hitos['1k']?'var(--naranja)':'#888'; } else { e500.textContent='—'; e500.style.color='#888'; } }
+
+      const e1k=document.getElementById('diasPlan1k');
+      if(e1k){ if(hitos['1k']){ const d=diasEntre(hitos['1k'],hitos['10k']?new Date(hitos['10k']):null); e1k.textContent=hitos['10k']?`Día ${d}`:`${d} días en curso`; e1k.style.color=hitos['10k']?'var(--naranja)':'#888'; } else { e1k.textContent='—'; e1k.style.color='#888'; } }
+
+    } catch(e) { console.log('[PLAN10K] Error:', e); }
+  }
+
+    function desbloquearPlanCRM(plan, titulo, texto) {
+    const card = document.getElementById('card-' + plan);
+    if (!card) return false;
+    const esNuevo = card.classList.contains('bloqueado');
+
+    if (!card.classList.contains('activo') && !card.classList.contains('completo')) {
+      card.classList.remove('bloqueado');
+      card.classList.add('activo');
+      const status = document.getElementById('status-' + plan);
+      if (status) { status.className = 'plan-status naranja'; status.textContent = 'Activo'; }
+      const body = document.getElementById('body-' + plan);
+      const chev = document.getElementById('chev-' + plan);
+      if (body) body.classList.add('open');
+      if (chev) chev.classList.add('open');
+    }
+
+    // Botón felicidades siempre visible en el plan anterior
+    mostrarBtnFelicidades(plan);
+
+    // Pop con confeti solo la primera vez
+    if (esNuevo) mostrarPopCelebracion(plan);
+
+    return esNuevo;
+  }
+
+  async function cargarEstado() {
+    try {
+      const snap = await getDoc(doc(db, 'usuarios', currentUid));
+      if (snap.exists()) {
+        estadoGlobal = snap.data().plan10k || {};
+      }
+      aplicarEstado();
+    } catch(e) { console.log('Error:', e); }
+  }
+
+  function aplicarEstado() {
+    // Aplicar checks guardados
+    Object.entries(estadoGlobal).forEach(([id, done]) => {
+      const el = document.getElementById('chk-' + id);
+      if (el && done) el.classList.add('done');
+    });
+
+    // Actualizar barras y desbloqueos
+    ['200','500','1k'].forEach(plan => actualizarPlan(plan));
+    actualizarGlobal();
+  }
+
+  function actualizarPlan(plan) {
+    const def = PLANES[plan];
+    if (!def) return;
+
+    const total = def.checks.length;
+    const hechos = def.checks.filter(id => estadoGlobal[id]).length;
+    const pct = total > 0 ? Math.round((hechos / total) * 100) : 0;
+
+    // Barra del plan
+    const barra = document.getElementById('barra-' + plan);
+    const pctEl = document.getElementById('pct-' + plan);
+    if (barra) barra.style.width = pct + '%';
+    if (pctEl) pctEl.textContent = pct + '%';
+
+    // Completado — desbloquear siguiente
+    if (pct === 100) {
+      const card = document.getElementById('card-' + plan);
+      if (card) { card.classList.remove('activo','bloqueado'); card.classList.add('completo'); }
+      const status = document.getElementById('status-' + plan);
+      if (status) { status.className = 'plan-status verde'; status.textContent = '✓ Completo'; }
+      const num = document.getElementById('num-' + plan);
+      if (num) num.textContent = '✓';
+      if (barra) barra.classList.add('verde');
+
+      // Desbloquear siguiente plan
+      if (def.siguiente) desbloquearPlan(def.siguiente);
+
+      // Celebración con pop
+      mostrarPopCelebracion(def.siguiente || plan);
+    }
+  }
+
+  function desbloquearPlan(plan) {
+    const card = document.getElementById('card-' + plan);
+    if (card && card.classList.contains('bloqueado')) {
+      card.classList.remove('bloqueado');
+      card.classList.add('activo');
+      const status = document.getElementById('status-' + plan);
+      if (status) { status.className = 'plan-status naranja'; status.innerHTML = 'Activo'; }
+      // Auto abrir el siguiente plan
+      const body = document.getElementById('body-' + plan);
+      const chev = document.getElementById('chev-' + plan);
+      if (body) body.classList.add('open');
+      if (chev) chev.classList.add('open');
+    }
+  }
+
+  // ============ CELEBRACIÓN ============
+
+  const MENSAJES_FELIZ = {
+    '500': { titulo: '¡Plan $200 Superado!', texto: 'Lograste tu primera semana. El sistema funciona — ahora duplica.' },
+    '1k':  { titulo: '¡Plan $500 Alcanzado!', texto: 'Tu equipo está activado. El binario empieza a trabajar por ti.' },
+    '10k': { titulo: '¡Tu Primer $1,000!', texto: 'Lo lograste. Ahora viene el Plan $10K — el juego cambia por completo.' },
+  };
+
+  // Mapa plan → id del div feliz
+  const FELIZ_MAP = { '500': 'feliz-200', '1k': 'feliz-500', '10k': 'feliz-1k' };
+
+  function mostrarBtnFelicidades(planHito) {
+    const divId = FELIZ_MAP[planHito];
+    const msg = MENSAJES_FELIZ[planHito];
+    if (!divId || !msg) return;
+
+    // Buscar el header del plan que lo contiene y agregar botón si no existe
+    const div = document.getElementById(divId);
+    if (!div) return;
+
+    // Poner contenido
+    div.innerHTML = `<strong style="color:var(--naranja);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;">${msg.titulo}</strong><br>${msg.texto}`;
+
+    // Agregar botón FELICIDADES en el status del plan correspondiente
+    const planCard = divId.replace('feliz-', 'card-');
+    const statusEl = document.getElementById('status-' + planCard.replace('card-',''));
+
+    // Buscar el header del plan correcto para poner el botón
+    const planKeys = { 'feliz-200': '200', 'feliz-500': '500', 'feliz-1k': '1k' };
+    const planKey = planKeys[divId];
+    const header = document.querySelector(`#card-${planKey} .plan-header`);
+
+    if (header && !header.querySelector('.btn-feliz')) {
+      const btn = document.createElement('button');
+      btn.className = 'btn-feliz';
+      btn.textContent = '😊 FELICIDADES';
+      btn.style.cssText = 'background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.4);border-radius:6px;padding:4px 8px;font-family:"Bebas Neue",sans-serif;font-size:11px;letter-spacing:1px;color:#22c55e;cursor:pointer;white-space:nowrap;margin-left:6px;flex-shrink:0;';
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        div.style.display = div.style.display === 'none' ? 'block' : 'none';
+      };
+      // Insertar antes del chevron
+      const chev = header.querySelector('.plan-chevron');
+      if (chev) header.insertBefore(btn, chev);
+    }
+  }
+
+  // Pop con confeti — solo primera vez
+  function lanzarConfeti() {
+    const canvas = document.getElementById('confettiCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particulas = Array.from({ length: 120 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      w: Math.random() * 10 + 5,
+      h: Math.random() * 5 + 3,
+      color: ['#E8602A','#ff8c5a','#fff','#fbbf24','#34d399'][Math.floor(Math.random() * 5)],
+      speed: Math.random() * 4 + 2,
+      angle: Math.random() * 360,
+      spin: Math.random() * 6 - 3,
+    }));
+
+    let frame;
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particulas.forEach(p => {
+        ctx.save();
+        ctx.translate(p.x + p.w / 2, p.y + p.h / 2);
+        ctx.rotate((p.angle * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+        p.y += p.speed;
+        p.angle += p.spin;
+        if (p.y > canvas.height) p.y = -10;
+      });
+      frame = requestAnimationFrame(draw);
+    }
+    draw();
+    setTimeout(() => { cancelAnimationFrame(frame); ctx.clearRect(0, 0, canvas.width, canvas.height); }, 4000);
+  }
+
+  window.cerrarPop = function() {
+    const pop = document.getElementById('popCelebracion');
+    if (pop) pop.style.display = 'none';
+  };
+
+  function mostrarPopCelebracion(planHito) {
+    const msg = MENSAJES_FELIZ[planHito];
+    if (!msg) return;
+    document.getElementById('popTitulo').textContent = msg.titulo;
+    document.getElementById('popTexto').textContent = msg.texto;
+    const pop = document.getElementById('popCelebracion');
+    pop.style.display = 'flex';
+    lanzarConfeti();
+  }
+
+  function actualizarGlobal() {
+    const todosChecks = Object.values(PLANES).flatMap(p => p.checks);
+    const total = todosChecks.length;
+    const hechos = todosChecks.filter(id => estadoGlobal[id]).length;
+    const pct = total > 0 ? Math.round((hechos / total) * 100) : 0;
+
+    document.getElementById('barraGlobal').style.width = pct + '%';
+    document.getElementById('pctGlobal').textContent = pct + '%';
+    document.getElementById('ptsTotal').textContent = pct + '%';
+
+    // Etapas
+    ['200','500','1k'].forEach(e => {
+      const dot = document.getElementById('etapa-' + e);
+      if (!dot) return;
+      const def = PLANES[e];
+      const tot = def.checks.length;
+      const hec = def.checks.filter(id => estadoGlobal[id]).length;
+      dot.classList.remove('activa','completa');
+      if (hec === tot && tot > 0) dot.classList.add('completa');
+      else if (hec > 0) dot.classList.add('activa');
+    });
+  }
+
+  // Toggle check
+  window.toggleCheck = async function(id, pts) {
+    const el = document.getElementById('chk-' + id);
+    if (!el || el.classList.contains('heredado') || el.classList.contains('disabled')) return;
+
+    const isDone = el.classList.toggle('done');
+    estadoGlobal[id] = isDone;
+
+    // Guardar en Firestore
+    try {
+      await setDoc(doc(db, 'usuarios', currentUid), { plan10k: estadoGlobal }, { merge: true });
+    } catch(e) { console.log('Error guardando:', e); }
+
+    // Detectar a qué plan pertenece y actualizar
+    const plan = id.split('-')[0];
+    actualizarPlan(plan);
+    actualizarGlobal();
+  };
+
+  // Accordion
+  window.togglePlan = function(plan) {
+    const body = document.getElementById('body-' + plan);
+    const chev = document.getElementById('chev-' + plan);
+    const card = document.getElementById('card-' + plan);
+    if (!body || card.classList.contains('bloqueado')) return;
+    body.classList.toggle('open');
+    if (chev) chev.classList.toggle('open');
+  };
+</script>
+
+</body>
+</html>
