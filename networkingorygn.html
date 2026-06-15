@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Networking — AUREX Wellness</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #050505;
+    --bg2: #0f0f0f;
+    --bg3: #181818;
+    --orange: #E8602A;
+    --orange-dim: rgba(232,96,42,0.12);
+    --orange-mid: rgba(232,96,42,0.25);
+    --white: #ffffff;
+    --gray1: #a0a0a0;
+    --gray2: #3a3a3a;
+    --gray3: #242424;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--gray2);
+    padding: 14px 16px 0;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--gray1);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+  }
+  .back-btn:hover { color: var(--orange); }
+
+  .header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.06em;
+    color: var(--white);
+    flex: 1;
+    text-align: right;
+  }
+  .header-title span { color: var(--orange); }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 0;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab-btn {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--gray1);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 12px 10px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn.active {
+    color: var(--orange);
+    border-bottom-color: var(--orange);
+  }
+  .tab-btn:hover:not(.active) { color: var(--white); }
+
+  /* ── CONTENT AREA ── */
+  .content { padding: 20px 16px; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 6px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    color: var(--white);
+    margin-bottom: 10px;
+  }
+
+  .section-desc {
+    font-size: 14px;
+    color: var(--gray1);
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg3);
+    border: 1px solid var(--gray2);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+
+  .card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 6px;
+  }
+
+  .card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    color: var(--white);
+    margin-bottom: 10px;
+  }
+
+  .card-body {
+    font-size: 14px;
+    color: var(--gray1);
+    line-height: 1.7;
+  }
+
+  /* ── STEP BADGE ── */
+  .step-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .step-badge {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    background: var(--orange);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    color: var(--white);
+    margin-top: 2px;
+  }
+  .step-content { flex: 1; }
+  .step-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+  .step-text {
+    font-size: 13px;
+    color: var(--gray1);
+    line-height: 1.65;
+  }
+
+  /* ── SCRIPT BLOCK ── */
+  .script-block {
+    background: var(--bg2);
+    border: 1px solid var(--gray2);
+    border-left: 3px solid var(--orange);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .script-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 8px;
+  }
+
+  .script-text {
+    font-size: 13px;
+    color: #d0d0d0;
+    line-height: 1.75;
+    white-space: pre-line;
+  }
+
+  .copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    background: var(--orange-dim);
+    border: 1px solid var(--orange-mid);
+    border-radius: 6px;
+    color: var(--orange);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 7px 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+    justify-content: center;
+  }
+  .copy-btn:hover { background: var(--orange-mid); }
+  .copy-btn.copied { color: #4ade80; border-color: #4ade80; background: rgba(74,222,128,0.08); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--gray2);
+    margin: 24px 0;
+  }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: var(--orange-dim);
+    border: 1px solid var(--orange-mid);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+  .info-box p {
+    font-size: 13px;
+    color: #e0c0b0;
+    line-height: 1.7;
+  }
+  .info-box strong { color: var(--orange); }
+
+  /* ── CRM LINK ── */
+  .crm-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg3);
+    border: 1px solid var(--gray2);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    text-decoration: none;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+  }
+  .crm-link:hover { border-color: var(--orange); }
+  .crm-link-left { display: flex; align-items: center; gap: 12px; }
+  .crm-link-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--orange-dim);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .crm-link-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+  }
+  .crm-link-sub {
+    font-size: 11px;
+    color: var(--gray1);
+    margin-top: 2px;
+  }
+
+  /* ── DAY TIMELINE ── */
+  .day-row {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0;
+    position: relative;
+  }
+  .day-row::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 36px;
+    bottom: 0;
+    width: 1px;
+    background: var(--gray2);
+  }
+  .day-row:last-child::before { display: none; }
+
+  .day-badge {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--bg3);
+    border: 2px solid var(--gray2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-right: 14px;
+    margin-top: 2px;
+    z-index: 1;
+  }
+  .day-badge .day-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    line-height: 1;
+    color: var(--orange);
+  }
+  .day-badge .day-lbl {
+    font-size: 7px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gray1);
+    line-height: 1;
+  }
+  .day-content-wrap {
+    flex: 1;
+    padding-bottom: 20px;
+  }
+  .day-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--white);
+    margin-bottom: 4px;
+    padding-top: 6px;
+  }
+  .day-desc {
+    font-size: 13px;
+    color: var(--gray1);
+    line-height: 1.65;
+    margin-bottom: 10px;
+  }
+
+  /* ── DECISION TREE ── */
+  .tree-node {
+    background: var(--bg3);
+    border: 1px solid var(--gray2);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .tree-node.yes { border-left: 3px solid #4ade80; }
+  .tree-node.no  { border-left: 3px solid #f87171; }
+  .tree-node.neutral { border-left: 3px solid var(--orange); }
+
+  .tree-q {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+  .tree-a {
+    font-size: 13px;
+    color: var(--gray1);
+    line-height: 1.6;
+  }
+  .tree-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+  .tree-tag.yes { background: rgba(74,222,128,0.12); color: #4ade80; }
+  .tree-tag.no  { background: rgba(248,113,113,0.12); color: #f87171; }
+  .tree-tag.neutral { background: var(--orange-dim); color: var(--orange); }
+
+  .tree-arrow {
+    text-align: center;
+    color: var(--gray2);
+    font-size: 18px;
+    margin: 2px 0 2px 0;
+  }
+
+  /* ── OBJECTION TABLE ── */
+  .obj-card {
+    background: var(--bg3);
+    border: 1px solid var(--gray2);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .obj-header {
+    background: var(--orange-dim);
+    border-bottom: 1px solid var(--orange-mid);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .obj-icon {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    background: var(--orange-mid);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .obj-question {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.4;
+  }
+  .obj-body { padding: 14px; }
+  .obj-answer {
+    font-size: 13px;
+    color: var(--gray1);
+    line-height: 1.75;
+    margin-bottom: 12px;
+  }
+
+  /* ── PILL TAG ── */
+  .pill {
+    display: inline-block;
+    background: var(--bg2);
+    border: 1px solid var(--gray2);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray1);
+    padding: 3px 10px;
+    margin: 3px 3px 3px 0;
+  }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1a1a1a;
+    border: 1px solid #4ade80;
+    color: #4ade80;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 30px;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<div id="toast">Copiado</div>
+
+<!-- ── HEADER ── -->
+<div class="header">
+  <div class="header-top">
+    <a href="dashboard.html" class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Dashboard
+    </a>
+    <div class="header-title">NET<span>WORKING</span></div>
+  </div>
+  <div class="tabs" id="tabBar">
+    <button class="tab-btn active" onclick="switchTab(0)">Lista</button>
+    <button class="tab-btn" onclick="switchTab(1)">Contacto</button>
+    <button class="tab-btn" onclick="switchTab(2)">Funnel/Zoom</button>
+    <button class="tab-btn" onclick="switchTab(3)">Seguimiento</button>
+    <button class="tab-btn" onclick="switchTab(4)">Cierre</button>
+    <button class="tab-btn" onclick="switchTab(5)">Objeciones</button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- ══════════════════════════════════════
+       TAB 1 — LISTA DE CONTACTOS
+  ══════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-0">
+    <div class="section-label">Paso 1</div>
+    <div class="section-title">TU LISTA DE CONTACTOS</div>
+    <p class="section-desc">Antes de hablar con nadie, construye tu lista. El activo más valioso en networking no es el producto — es tu red de relaciones. Trátala con intención.</p>
+
+    <div class="info-box">
+      <p><strong>Regla de oro:</strong> No califiques antes de contactar. Tu trabajo es hacer la lista completa primero. Quien tú crees que "no" — a veces es el que más necesita esto.</p>
+    </div>
+
+    <a href="crm.html" class="crm-link">
+      <div class="crm-link-left">
+        <div class="crm-link-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8602A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 13h4"/></svg>
+        </div>
+        <div>
+          <div class="crm-link-label">Abrir CRM</div>
+          <div class="crm-link-sub">Agrega tus contactos ahora</div>
+        </div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a0a0a0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+
+    <div class="card">
+      <div class="card-label">¿Quién va en tu lista?</div>
+      <div class="card-title">LAS 4 CATEGORÍAS</div>
+      <div class="step-row">
+        <div class="step-badge">A</div>
+        <div class="step-content">
+          <div class="step-title">Calientes — Confían en ti plenamente</div>
+          <div class="step-text">Familia, amigos cercanos, socios anteriores, personas que han trabajado contigo antes. Empezamos aquí.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-badge">B</div>
+        <div class="step-content">
+          <div class="step-title">Tibios — Te conocen, no te tratan frecuente</div>
+          <div class="step-text">Compañeros de trabajo, conocidos de comunidades, contactos de Instagram/WhatsApp que interactúan contigo.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-badge">C</div>
+        <div class="step-content">
+          <div class="step-title">Fríos — Conexiones nuevas o débiles</div>
+          <div class="step-text">Personas con quienes tienes poco vínculo. Se abordan con calidez primero — nunca con pitch directo.</div>
+        </div>
+      </div>
+      <div class="step-row" style="margin-bottom:0">
+        <div class="step-badge">D</div>
+        <div class="step-content">
+          <div class="step-title">Referidos — Te los presentaron</div>
+          <div class="step-text">Personas que alguien de tu red te recomendó. Llegan con credibilidad prestada — aprovéchala.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Consejo estratégico</div>
+      <div class="card-title">MÍNIMO 50 NOMBRES</div>
+      <div class="card-body">
+        No pares en 10 o 20. Escribe al menos 50 nombres antes de empezar. Cuando la lista es corta, el networker se vuelve desesperado. Cuando es larga, opera desde la abundancia.
+        <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:6px;">
+          <span class="pill">Familia</span>
+          <span class="pill">Excompañeros</span>
+          <span class="pill">Clientes anteriores</span>
+          <span class="pill">Grupos de fe</span>
+          <span class="pill">Gimnasio</span>
+          <span class="pill">Vecinos</span>
+          <span class="pill">Padres de escuela</span>
+          <span class="pill">Instagram</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB 2 — PRIMER CONTACTO
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-1">
+    <div class="section-label">Paso 2</div>
+    <div class="section-title">PRIMER CONTACTO</div>
+    <p class="section-desc">El objetivo no es vender — es despertar curiosidad y abrir la puerta. Elige el script que más suena a ti.</p>
+
+    <div class="info-box">
+      <p><strong>Antes de enviar:</strong> Personaliza el nombre. Un mensaje que parece copiado y pegado pierde el 80% de su fuerza antes de que lo lean.</p>
+    </div>
+
+    <div class="card-label" style="margin-bottom:10px">Opción 1 — Científico / Informativo</div>
+    <div class="script-block">
+      <div class="script-tag">WhatsApp — Tono formal</div>
+      <div class="script-text" id="s1">Hola [nombre], ¿cómo estás?
+
+Hace unos días revisé una investigación proveniente de Noruega sobre un enfoque metabólico que está logrando resultados bastante interesantes — reducción de grasa corporal preservando e incluso estimulando masa muscular. Algo que fisiológicamente no es tan común.
+
+Los reportes también muestran mejoras en sensibilidad a la insulina, salud intestinal y regulación hormonal. Sin efectos secundarios negativos reportados.
+
+Pensé en ti porque sé que cuidas tu salud. Si te interesa revisar el respaldo científico, te comparto el material y sacas tus propias conclusiones.</div>
+      <button class="copy-btn" onclick="copyScript('s1', this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copiar mensaje
+      </button>
+    </div>
+
+    <div class="card-label" style="margin-bottom:10px; margin-top:6px">Opción 2 — Conversacional / Cercano</div>
+    <div class="script-block">
+      <div class="script-tag">WhatsApp — Tono personal</div>
+      <div class="script-text" id="s2">Hola [nombre]! Hace tiempo que no hablamos, espero que estés muy bien.
+
+Mira, me topé con algo que me tiene muy entusiasmado y de inmediato pensé en ti. Tiene que ver con una investigación sobre unas moléculas de señalización que están logrando pérdida de grasa preservando músculo — de hecho, promoviendo su desarrollo. Que fisiológicamente ya es todo un reto.
+
+Y lo más llamativo: sin efectos secundarios negativos, con beneficios en insulina, intestino y sistema hormonal.
+
+¿Te paso el video con el respaldo científico? Tú sacas tus conclusiones.</div>
+      <button class="copy-btn" onclick="copyScript('s2', this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copiar mensaje
+      </button>
+    </div>
+
+    <div class="card-label" style="margin-bottom:10px; margin-top:6px">Opción 3 — Historia personal</div>
+    <div class="script-block">
+      <div class="script-tag">WhatsApp — Tono experiencia propia</div>
+      <div class="script-text" id="s3">Hola [nombre], te escribo porque me acordé de ti.
+
+Hace poco empecé a tomar algo que honestamente no esperaba que funcionara tan diferente. Se trata de un péptido sublingual que actúa a nivel metabólico — y los resultados que estoy viendo en mí y en personas cercanas me dejaron sin palabras.
+
+No es lo de siempre. Tiene respaldo científico de estudios en Noruega y lo que más me convenció es que no hay efectos negativos reportados.
+
+Sé que cuidas tu cuerpo y pensé que merecías verlo. ¿Te comparto la información?</div>
+      <button class="copy-btn" onclick="copyScript('s3', this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copiar mensaje
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="card">
+      <div class="card-label">Regla del primer contacto</div>
+      <div class="card-title">3 COSAS QUE NUNCA HACES</div>
+      <div class="step-row">
+        <div class="step-badge" style="background:#f87171">1</div>
+        <div class="step-content">
+          <div class="step-title">No menciones precio en el primer mensaje</div>
+          <div class="step-text">Primero despiertas interés. El precio llega después, cuando ya ven el valor.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-badge" style="background:#f87171">2</div>
+        <div class="step-content">
+          <div class="step-title">No expliques todo de entrada</div>
+          <div class="step-text">El objetivo es una respuesta — no cerrar en el primer mensaje. La curiosidad es tu aliada.</div>
+        </div>
+      </div>
+      <div class="step-row" style="margin-bottom:0">
+        <div class="step-badge" style="background:#f87171">3</div>
+        <div class="step-content">
+          <div class="step-title">No copies y pegues sin personalizar</div>
+          <div class="step-text">Al menos cambia el nombre y agrega una referencia personal. La frialdad de un copy-paste la sienten.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB 3 — FUNNEL / ZOOM
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-2">
+    <div class="section-label">Paso 3</div>
+    <div class="section-title">FUNNEL O ZOOM</div>
+    <p class="section-desc">Cuando el prospecto dice "sí, mándame la info" — aquí decides si va al funnel o a un Zoom. No son lo mismo y no se usan igual.</p>
+
+    <div class="card">
+      <div class="card-label">¿Cuándo mandas el funnel?</div>
+      <div class="card-title">FUNNEL — Contacto tibio o frío</div>
+      <div class="card-body">
+        Cuando el prospecto no te conoce bien, el funnel hace el trabajo de presentación por ti. Es tu vendedor 24/7 que trabaja sin que estés presente.
+        <div style="margin-top:12px;">
+          <div class="step-row" style="margin-bottom:10px">
+            <div class="step-badge" style="width:22px;height:22px;font-size:12px">1</div>
+            <div class="step-content"><div class="step-text">Responde "Sí, me interesa" o cualquier señal positiva</div></div>
+          </div>
+          <div class="step-row" style="margin-bottom:10px">
+            <div class="step-badge" style="width:22px;height:22px;font-size:12px">2</div>
+            <div class="step-content"><div class="step-text">Envía el funnel de producto: <span style="color:var(--orange)">orygn-acceso.vercel.app/?ref=huracan</span></div></div>
+          </div>
+          <div class="step-row" style="margin-bottom:0">
+            <div class="step-badge" style="width:22px;height:22px;font-size:12px">3</div>
+            <div class="step-content"><div class="step-text">Dale 24 hrs y entra al seguimiento</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="script-block">
+      <div class="script-tag">Mensaje al enviar el funnel</div>
+      <div class="script-text" id="s4">Perfecto [nombre], aquí está toda la información con el respaldo científico y los testimonios:
+
+👉 orygn-acceso.vercel.app/?ref=huracan
+
+Tómate el tiempo de revisarlo con calma. Cuando lo veas, con gusto platicamos y resuelvo cualquier duda que tengas.</div>
+      <button class="copy-btn" onclick="copyScript('s4', this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copiar mensaje
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="card">
+      <div class="card-label">¿Cuándo invitas a Zoom?</div>
+      <div class="card-title">ZOOM — Contacto caliente o referido</div>
+      <div class="card-body">
+        Cuando hay confianza establecida, ir directo a Zoom es más eficiente. El cierre por videollamada es mucho más alto que por funnel solo.
+      </div>
+    </div>
+
+    <div class="script-block">
+      <div class="script-tag">Invitación a Zoom — Tono directo</div>
+      <div class="script-text" id="s5">Me da gusto que te interese [nombre]. Mira, en lugar de mandarte un montón de información escrita, prefiero platicarte yo directamente — son 20 minutos y me aseguro de responder exactamente lo que tú necesitas saber.
+
+¿Cuándo tienes espacio esta semana, mañana o pasado?</div>
+      <button class="copy-btn" onclick="copyScript('s5', this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copiar mensaje
+      </button>
+    </div>
+
+    <div class="script-block">
+      <div class="script-tag">Invitación a Zoom — Después del funnel</div>
+      <div class="script-text" id="s6">¿Tuviste oportunidad de ver la información [nombre]?
+
+Me gustaría darte 20 minutos para platicarte en vivo — hay cosas que en texto se pierden y quiero asegurarme de que lo veas completo con contexto real.
+
+¿Tienes espacio hoy o mañana?</div>
+      <button class="copy-btn" onclick="copyScript('s6', this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copiar mensaje
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB 4 — SEGUIMIENTO 7 DÍAS
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-3">
+    <div class="section-label">Paso 4</div>
+    <div class="section-title">SEGUIMIENTO 7 DÍAS</div>
+    <p class="section-desc">La mayoría de los cierres pasan entre el día 2 y el día 5. No es insistir — es acompañar. Cada día tiene un ángulo diferente.</p>
+
+    <div class="info-box">
+      <p><strong>Clave:</strong> Nunca dos días seguidos de silencio hasta el día 4. El seguimiento estratégico es la diferencia entre un prospecto que "lo piensa" y uno que decide.</p>
+    </div>
+
+    <!-- Día 0 -->
+    <div class="day-row">
+      <div class="day-badge"><span class="day-num">0</span><span class="day-lbl">día</span></div>
+      <div class="day-content-wrap">
+        <div class="day-title">Confirmación inmediata</div>
+        <div class="day-desc">Justo después de enviar el funnel o terminar el Zoom. Confirmas que llegó y abres la puerta.</div>
+        <div class="script-block">
+          <div class="script-tag">Mismo día</div>
+          <div class="script-text" id="d0">Hola [nombre], solo confirmar que te llegó bien la información. Cualquier duda que tengas, aquí estoy. No hay prisa — revísalo cuando puedas.</div>
+          <button class="copy-btn" onclick="copyScript('d0', this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copiar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Día 1 -->
+    <div class="day-row">
+      <div class="day-badge"><span class="day-num">1</span><span class="day-lbl">día</span></div>
+      <div class="day-content-wrap">
+        <div class="day-title">Respaldo científico</div>
+        <div class="day-desc">Refuerzas la credibilidad del producto. Ingredientes, origen, empresa. No vendes — informas.</div>
+        <div class="script-block">
+          <div class="script-tag">Día 1</div>
+          <div class="script-text" id="d1">Hola [nombre], quería compartirte algo que a mí me convenció mucho cuando lo vi.
+
+triGLP es un péptido sublingual de salmón noruego — no es una pastilla ni un batido. Actúa directamente a nivel de señalización metabólica, que es exactamente lo que estudios recientes identificaron como la clave para pérdida de grasa sostenida sin sacrificar músculo.
+
+La empresa está respaldada por ORYGN, con distribución en más de 50 países. Llevan años en el mercado de bienestar y esto es su producto más avanzado.
+
+Si tienes alguna pregunta sobre ingredientes o la ciencia detrás, con gusto te la resuelvo.</div>
+          <button class="copy-btn" onclick="copyScript('d1', this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copiar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Día 2 -->
+    <div class="day-row">
+      <div class="day-badge"><span class="day-num">2</span><span class="day-lbl">día</span></div>
+      <div class="day-content-wrap">
+        <div class="day-title">Testimonio real</div>
+        <div class="day-desc">Una historia de transformación concreta. No estadísticas — una persona real con resultado real.</div>
+        <div class="script-block">
+          <div class="script-tag">Día 2</div>
+          <div class="script-text" id="d2">Hola [nombre], te quería compartir algo que me pasó ayer con alguien de mi equipo.
+
+[Nombre del testimonio] lleva 6 semanas usando triGLP. Me dijo que en las primeras dos semanas ya notó diferencia en energía y en cómo dormía. Al mes, bajó 4 kilos de grasa — y lo más importante: no perdió músculo. Su médico le revisó los análisis y quedó sorprendido.
+
+Eso es exactamente lo que hace diferente a esto de todo lo demás que hay en el mercado.
+
+¿Tú qué resultado sería el que más te importaría ver en ti?</div>
+          <button class="copy-btn" onclick="copyScript('d2', this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copiar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Día 3 -->
+    <div class="day-row">
+      <div class="day-badge"><span class="day-num">3</span><span class="day-lbl">día</span></div>
+      <div class="day-content-wrap">
+        <div class="day-title">Encuentra la duda real</div>
+        <div class="day-desc">Si no ha respondido, hay algo que lo detiene. Este mensaje abre esa conversación sin presión.</div>
+        <div class="script-block">
+          <div class="script-tag">Día 3</div>
+          <div class="script-text" id="d3">Hola [nombre], sé que todos tenemos el tiempo encima y no siempre hay espacio para revisar todo.
+
+Solo quiero saber: ¿hay algo específico que te genere duda o que no quedó claro? A veces hay una pregunta que parece pequeña pero es la que define la decisión.
+
+Pregúntame lo que sea — sin compromiso.</div>
+          <button class="copy-btn" onclick="copyScript('d3', this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copiar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Día 4 -->
+    <div class="day-row">
+      <div class="day-badge"><span class="day-num">4</span><span class="day-lbl">día</span></div>
+      <div class="day-content-wrap">
+        <div class="day-title">Silencio estratégico</div>
+        <div class="day-desc">No envías nada. El silencio después de tres mensajes da espacio para que procesen. Es tan importante como los días de contacto.</div>
+        <div class="card" style="margin-bottom:0">
+          <div class="card-body" style="font-size:13px; color: var(--gray1)">Hoy no escribes. El silencio intencional no es abandono — es respeto al proceso de decisión del prospecto. Muchos responden solos en este día.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Día 5 -->
+    <div class="day-row">
+      <div class="day-badge"><span class="day-num">5</span><span class="day-lbl">día</span></div>
+      <div class="day-content-wrap">
+        <div class="day-title">Reflexión de identidad</div>
+        <div class="day-desc">No hablas del producto — hablas de quién quiere ser en 90 días. Activa la visión, no la urgencia.</div>
+        <div class="script-block">
+          <div class="script-tag">Día 5</div>
+          <div class="script-text" id="d5">Hola [nombre], te hago una pregunta y no tienes que responderme si no quieres.
+
+¿Cómo quieres sentirte en 90 días? No en términos de kilos — sino de energía, de cómo te ves cuando te miras al espejo, de cómo te sientes cuando te despiertas.
+
+Porque eso es exactamente lo que las personas de nuestro equipo están experimentando. Y me parece que tú mereces lo mismo.</div>
+          <button class="copy-btn" onclick="copyScript('d5', this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copiar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Día 6 -->
+    <div class="day-row">
+      <div class="day-badge"><span class="day-num">6</span><span class="day-lbl">día</span></div>
+      <div class="day-content-wrap">
+        <div class="day-title">Puerta siempre abierta</div>
+        <div class="day-desc">El último mensaje del ciclo. No cierras la relación — la dejas viva sin presión.</div>
+        <div class="script-block">
+          <div class="script-tag">Día 6</div>
+          <div class="script-text" id="d6">Hola [nombre], este es mi último mensaje por ahora para no saturarte.
+
+Solo quiero que sepas que la información sigue disponible cuando quieras revisarla con más calma. Y yo sigo aquí para cuando estés lista.
+
+No hay prisa. Los mejores resultados llegan cuando la decisión viene desde adentro.</div>
+          <button class="copy-btn" onclick="copyScript('d6', this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copiar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Día 7+ -->
+    <div class="day-row" style="margin-bottom:0">
+      <div class="day-badge" style="border-color:var(--orange)"><span class="day-num" style="font-size:11px">7+</span><span class="day-lbl">días</span></div>
+      <div class="day-content-wrap" style="padding-bottom:0">
+        <div class="day-title">Seguimiento largo plazo</div>
+        <div class="day-desc">Este prospecto va al CRM en etapa "Seguimiento". Cada 2-3 semanas lo retomas con un testimonio nuevo, un resultado de tu equipo o una noticia del producto. Las semillas que plantas hoy cierran en 3 meses.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB 5 — CIERRE
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-4">
+    <div class="section-label">Paso 5</div>
+    <div class="section-title">CIERRE</div>
+    <p class="section-desc">El cierre no es presionar — es guiar a quien ya está convencido a tomar acción. Una acción simple: registrarse.</p>
+
+    <div class="info-box">
+      <p><strong>Recuerda:</strong> Tu trabajo no es convencer a quien no quiere — es facilitar el sí de quien ya está listo pero necesita un empujón claro.</p>
+    </div>
+
+    <div class="card-label" style="margin-bottom:12px">Árbol de decisión</div>
+
+    <div class="tree-node neutral">
+      <span class="tree-tag neutral">Inicio</span>
+      <div class="tree-q">¿Vio el funnel o asistió al Zoom?</div>
+    </div>
+    <div class="tree-arrow">↓</div>
+
+    <div style="display:flex; gap:8px; margin-bottom:8px">
+      <div class="tree-node yes" style="flex:1">
+        <span class="tree-tag yes">Sí lo vio</span>
+        <div class="tree-a">Preguntas: "¿Qué fue lo que más te llamó la atención?" Deja que hable — el cierre emerge de su propio entusiasmo.</div>
+      </div>
+      <div class="tree-node no" style="flex:1">
+        <span class="tree-tag no">No lo vio</span>
+        <div class="tree-a">No cierres todavía. Agenda un Zoom de 20 min o reactiva con el mensaje del Día 3.</div>
+      </div>
+    </div>
+
+    <div class="tree-arrow">↓</div>
+
+    <div class="tree-node yes">
+      <span class="tree-tag yes">Respuesta positiva</span>
+      <div class="tree-q">Cierre directo</div>
+      <div class="tree-a">Perfecto entonces — el siguiente paso es tu registro. Te toma menos de 3 minutos y yo te acompaño. ¿Lo hacemos ahora?</div>
+    </div>
+    <div class="tree-arrow">↓</div>
+
+    <div class="tree-node no">
+      <span class="tree-tag no">"Lo pienso" / "Déjame ver"</span>
+      <div class="tree-q">Encuentra la objeción real</div>
+      <div class="tree-a">"Con gusto. ¿Hay algo específico que no quedó claro o que te genera duda?" — Escucha. La objeción real casi nunca es la primera que dicen.</div>
+    </div>
+    <div class="tree-arrow">↓</div>
+
+    <div class="tree-node neutral">
+      <span class="tree-tag neutral">Objeción resuelta</span>
+      <div class="tree-q">Regresa al cierre</div>
+      <div class="tree-a">"Entonces, ¿estamos listos para el registro?" — Simple. Directo. Sin rodeos.</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="card-label" style="margin-bottom:10px">Scripts de cierre</div>
+
+    <div class="script-block">
+      <div class="script-tag">Cierre directo</div>
+      <div class="script-text" id="c1">Me da gusto [nombre]. Entonces el siguiente paso es simple — solo te registras aquí y empezamos:
+
+👉 orygn-acceso.vercel.app/?ref=huracan
+
+Son menos de 3 minutos. Yo te acompaño en el proceso y te explico cómo funciona todo una vez adentro. ¿Lo hacemos?</div>
+      <button class="copy-btn" onclick="copyScript('c1', this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copiar
+      </button>
+    </div>
+
+    <div class="script-block">
+      <div class="script-tag">Reactivación de prospecto frío</div>
+      <div class="script-text" id="c2">Hola [nombre], espero que estés muy bien.
+
+Hace unos meses te compartí información sobre triGLP y quería retomarte porque en estas semanas el equipo ha tenido resultados que no puedo no compartirte.
+
+[Inserta testimonio reciente]
+
+El mercado está en un momento muy particular y quería que lo tuvieras en mente. Sin presión — solo quería que lo supieras. ¿Seguimos la conversación?</div>
+      <button class="copy-btn" onclick="copyScript('c2', this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copiar
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB 6 — OBJECIONES
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-5">
+    <div class="section-label">Referencia rápida</div>
+    <div class="section-title">OBJECIONES</div>
+    <p class="section-desc">Cada objeción es una petición de más información. Quien objeta está considerando — quien no está interesado simplemente no responde.</p>
+
+    <!-- 1 -->
+    <div class="obj-card">
+      <div class="obj-header">
+        <div class="obj-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8602A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="obj-question">"Es muy caro"</div>
+      </div>
+      <div class="obj-body">
+        <div class="obj-answer">Entiendo perfectamente. ¿Puedo preguntarte con qué lo estás comparando? Porque si lo comparamos con lo que gastamos en cafés, suplementos que no funcionan, ropa que no nos queda... el costo real es muy diferente. triGLP es una inversión en tu metabolismo — no un gasto mensual. Muchas personas del equipo dejaron de tomar 3 o 4 cosas que no funcionaban y con eso cubrieron el costo.</div>
+        <button class="copy-btn" onclick="copyText('Entiendo perfectamente. ¿Puedo preguntarte con qué lo estás comparando? Porque si lo comparamos con lo que gastamos en cafés, suplementos que no funcionan, ropa que no nos queda... el costo real es muy diferente. triGLP es una inversión en tu metabolismo — no un gasto mensual. Muchas personas del equipo dejaron de tomar 3 o 4 cosas que no funcionaban y con eso cubrieron el costo.', this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copiar respuesta
+        </button>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="obj-card">
+      <div class="obj-header">
+        <div class="obj-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8602A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="obj-question">"Es una pirámide"</div>
+      </div>
+      <div class="obj-body">
+        <div class="obj-answer">Te lo agradezco porque es una pregunta válida y merece una respuesta honesta. Las pirámides son ilegales y no tienen producto real — aquí el producto es el centro. triGLP existe, funciona y se consume. Lo que hay es un modelo de distribución donde quien comparte recibe una compensación — igual que un afiliado de Amazon, pero con un producto de salud. Si no hubiera producto, yo no estaría aquí.</div>
+        <button class="copy-btn" onclick="copyText('Te lo agradezco porque es una pregunta válida y merece una respuesta honesta. Las pirámides son ilegales y no tienen producto real — aquí el producto es el centro. triGLP existe, funciona y se consume. Lo que hay es un modelo de distribución donde quien comparte recibe una compensación — igual que un afiliado de Amazon, pero con un producto de salud. Si no hubiera producto, yo no estaría aquí.', this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copiar respuesta
+        </button>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="obj-card">
+      <div class="obj-header">
+        <div class="obj-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8602A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="obj-question">"No tengo tiempo"</div>
+      </div>
+      <div class="obj-body">
+        <div class="obj-answer">Perfecto — porque esto no requiere tiempo extra. Tomas el producto como parte de tu rutina diaria y el negocio funciona con conversaciones que ya tienes. No hay eventos que atender, no hay inventario que manejar. El sistema ya está montado — el funnel, la app, los materiales. Tu trabajo es compartir lo que ya estás viviendo.</div>
+        <button class="copy-btn" onclick="copyText('Perfecto — porque esto no requiere tiempo extra. Tomas el producto como parte de tu rutina diaria y el negocio funciona con conversaciones que ya tienes. No hay eventos que atender, no hay inventario que manejar. El sistema ya está montado — el funnel, la app, los materiales. Tu trabajo es compartir lo que ya estás viviendo.', this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copiar respuesta
+        </button>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="obj-card">
+      <div class="obj-header">
+        <div class="obj-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8602A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="obj-question">"Ya tomé algo parecido y no funcionó"</div>
+      </div>
+      <div class="obj-body">
+        <div class="obj-answer">Tiene todo el sentido que lo pienses así — el mercado de suplementos está lleno de promesas vacías. La diferencia de triGLP está en el mecanismo: no es un quemador, no es un supresor de apetito. Es señalización metabólica a nivel molecular. Actúa diferente porque trabaja diferente. Eso es lo que hace los estudios noruegos tan relevantes — no es marketing, es bioquímica documentada.</div>
+        <button class="copy-btn" onclick="copyText('Tiene todo el sentido que lo pienses así — el mercado de suplementos está lleno de promesas vacías. La diferencia de triGLP está en el mecanismo: no es un quemador, no es un supresor de apetito. Es señalización metabólica a nivel molecular. Actúa diferente porque trabaja diferente. Eso es lo que hace los estudios noruegos tan relevantes — no es marketing, es bioquímica documentada.', this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copiar respuesta
+        </button>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="obj-card">
+      <div class="obj-header">
+        <div class="obj-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8602A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="obj-question">"¿Tiene efectos secundarios?"</div>
+      </div>
+      <div class="obj-body">
+        <div class="obj-answer">Esa es exactamente la pregunta correcta. Los estudios clínicos disponibles no reportan efectos secundarios negativos. El péptido de salmón tiene estatus GRAS — "Generalmente Reconocido como Seguro" — que es la clasificación más alta de seguridad en ingredientes alimentarios. No es un medicamento, es un suplemento nutricional de origen natural. Dicho eso, siempre recomiendo que quien tiene condiciones médicas específicas lo consulte con su médico — como con cualquier suplemento.</div>
+        <button class="copy-btn" onclick="copyText('Esa es exactamente la pregunta correcta. Los estudios clínicos disponibles no reportan efectos secundarios negativos. El péptido de salmón tiene estatus GRAS — \"Generalmente Reconocido como Seguro\" — que es la clasificación más alta de seguridad en ingredientes alimentarios. No es un medicamento, es un suplemento nutricional de origen natural. Dicho eso, siempre recomiendo que quien tiene condiciones médicas específicas lo consulte con su médico — como con cualquier suplemento.', this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copiar respuesta
+        </button>
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="obj-card">
+      <div class="obj-header">
+        <div class="obj-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8602A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="obj-question">"¿Cuánto tiempo tarda en hacer efecto?"</div>
+      </div>
+      <div class="obj-body">
+        <div class="obj-answer">Los primeros cambios que las personas reportan son en energía y calidad del sueño — eso muchas veces pasa en la primera o segunda semana. Los cambios físicos visibles generalmente empiezan entre la semana 3 y 6, dependiendo del metabolismo y hábitos de cada persona. Lo que hace diferente a triGLP es que los resultados se sostienen porque trabaja el metabolismo de fondo, no solo el síntoma.</div>
+        <button class="copy-btn" onclick="copyText('Los primeros cambios que las personas reportan son en energía y calidad del sueño — eso muchas veces pasa en la primera o segunda semana. Los cambios físicos visibles generalmente empiezan entre la semana 3 y 6, dependiendo del metabolismo y hábitos de cada persona. Lo que hace diferente a triGLP es que los resultados se sostienen porque trabaja el metabolismo de fondo, no solo el síntoma.', this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copiar respuesta
+        </button>
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="obj-card">
+      <div class="obj-header">
+        <div class="obj-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8602A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="obj-question">"No sé vender / No soy de ventas"</div>
+      </div>
+      <div class="obj-body">
+        <div class="obj-answer">Qué bueno — porque esto no es vender. Es compartir. Tú usas el producto, experimentas los resultados, y cuando alguien te pregunta "¿qué hiciste?" — le mandas un link. El funnel hace el trabajo de presentar, el sistema cierra. Tu único trabajo es conectar personas con una experiencia que ya tuviste tú. Eso no requiere técnica de ventas — requiere honestidad.</div>
+        <button class="copy-btn" onclick="copyText('Qué bueno — porque esto no es vender. Es compartir. Tú usas el producto, experimentas los resultados, y cuando alguien te pregunta \"¿qué hiciste?\" — le mandas un link. El funnel hace el trabajo de presentar, el sistema cierra. Tu único trabajo es conectar personas con una experiencia que ya tuviste tú. Eso no requiere técnica de ventas — requiere honestidad.', this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copiar respuesta
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /panel-5 -->
+
+</div><!-- /content -->
+
+<script>
+// ── TABS
+function switchTab(index) {
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === index);
+  });
+  document.querySelectorAll('.tab-panel').forEach((panel, i) => {
+    panel.classList.toggle('active', i === index);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── COPY FROM ELEMENT ID
+function copyScript(id, btn) {
+  const text = document.getElementById(id).innerText;
+  doCopy(text, btn);
+}
+
+// ── COPY FROM RAW TEXT
+function copyText(text, btn) {
+  doCopy(text, btn);
+}
+
+// ── CORE COPY
+function doopy(text, btn) {
+  doopy = doopy; // alias fallback
+}
+
+function doopy2(text) {}
+
+function doCopyFallback(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0;';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+}
+
+function doopy3(text) { doCopyFallback(text); }
+
+function doopy4(text, btn) { doopy3(text); showToast(); markBtn(btn); }
+
+function doCopy(text, btn) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast();
+      markBtn(btn);
+    }).catch(() => {
+      doopy3(text);
+      showToast();
+      markBtn(btn);
+    });
+  } else {
+    doopy3(text);
+    showToast();
+    markBtn(btn);
+  }
+}
+
+function markBtn(btn) {
+  const orig = btn.innerHTML;
+  btn.classList.add('copied');
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copiado';
+  setTimeout(() => {
+    btn.classList.remove('copied');
+    btn.innerHTML = orig;
+  }, 2000);
+}
+
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+</script>
+</body>
+</html>
